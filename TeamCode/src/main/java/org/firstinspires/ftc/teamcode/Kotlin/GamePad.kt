@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode
+package org.firstinspires.ftc.teamcode.Kotlin
 import com.qualcomm.robotcore.hardware.Gamepad
 
 
@@ -24,7 +24,7 @@ public class GamePad {
     val BUTTON_DPAD_UP:Int      = (1 shl 12)
     val BUTTON_DPAD_DOWN:Int    = (1 shl 13)
 
-    var buttonHandler:IButtonHandler;
+    var buttonHandler: IButtonHandler;
 
 
     var gamepad:Gamepad

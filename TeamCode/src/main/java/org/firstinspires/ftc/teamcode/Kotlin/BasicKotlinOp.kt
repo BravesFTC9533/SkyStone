@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode
+package org.firstinspires.ftc.teamcode.Kotlin
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import com.qualcomm.robotcore.hardware.Gamepad
@@ -7,21 +7,18 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode as LinearOpMode
 @TeleOp(name = "Concept: Telemetry", group = "Concept")
 class BasicKotlinOp : LinearOpMode(), IButtonHandler {
 
-    override fun gamepadButtonEvent(gamePad: GamePad, button: Int, pressed: Boolean) {
-        //TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
-
 
     private lateinit var basicRobot: BasicRobot
     private lateinit var gamepad: Gamepad
 
-
+    private lateinit var ftcGamepad: GamePad
     override fun runOpMode() {
 
         basicRobot = BasicRobot(hardwareMap)
-
-
         gamepad = this.gamepad1
+
+        ftcGamepad = GamePad(gamepad, this)
+
 
         while(!(isStarted || isStopRequested))
         {
@@ -48,6 +45,8 @@ class BasicKotlinOp : LinearOpMode(), IButtonHandler {
         return result
     }
 
-
+    override fun gamepadButtonEvent(gamePad: GamePad, button: Int, pressed: Boolean) {
+        //TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
 
 }
