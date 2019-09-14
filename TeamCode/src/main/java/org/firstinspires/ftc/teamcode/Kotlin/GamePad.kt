@@ -2,9 +2,6 @@ package org.firstinspires.ftc.teamcode.Kotlin
 import com.qualcomm.robotcore.hardware.Gamepad
 
 
-public interface IButtonHandler {
-    fun gamepadButtonEvent(gamePad: GamePad, button: Int, pressed: Boolean);
-}
 public class GamePad {
 
     var prev_buttons: Int = 0
@@ -31,11 +28,24 @@ public class GamePad {
     constructor(gamepad: Gamepad, buttonHandler: IButtonHandler) {
         this.gamepad = gamepad
 
-        this.buttonHandler = buttonHandler;
+        this.buttonHandler = buttonHandler
 
         this.prev_buttons = getButtonsPressed()
 
+    }
 
+    fun getLeftStickX() : Double {
+        return this.gamepad.left_stick_x.toDouble()
+    }
+    fun getLeftStickY() : Double {
+        return this.gamepad.left_stick_y.toDouble()
+    }
+
+    fun getRightStickX() : Double {
+        return this.gamepad.right_stick_x.toDouble()
+    }
+    fun getRightStickY() : Double {
+        return this.gamepad.right_stick_y.toDouble()
     }
 
     fun getButtonsPressed() : Int {
@@ -77,13 +87,13 @@ public class GamePad {
                 // Button is pressed.
                 //
 
-                //buttonHandler.gamepadButtonEvent(this, buttonMask, true)
+                buttonHandler.gamepadButtonEvent(this, buttonMask, true)
             } else {
                 //
                 // Button is released.
                 //
 
-                //buttonHandler.gamepadButtonEvent(this, buttonMask, false)
+                buttonHandler.gamepadButtonEvent(this, buttonMask, true)
             }
             //
             // Clear the least significant set bit.
@@ -93,4 +103,6 @@ public class GamePad {
 
         prev_buttons = currentButtons
     }
+
+
 }
