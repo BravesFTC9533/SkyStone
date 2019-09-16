@@ -1,12 +1,9 @@
-package org.firstinspires.ftc.teamcode.Common;
+package org.firstinspires.ftc.teamcode.common;
 
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.teamcode.Robot;
-
-import javax.crypto.ExemptionMechanism;
 
 
 /**

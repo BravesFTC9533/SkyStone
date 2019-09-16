@@ -5,7 +5,7 @@ import com.qualcomm.robotcore.hardware.DcMotorEx
 import com.qualcomm.robotcore.hardware.DcMotorSimple
 import com.qualcomm.robotcore.hardware.HardwareMap
 import com.qualcomm.robotcore.util.Range
-import org.firstinspires.ftc.teamcode.Common.IDrive
+import org.firstinspires.ftc.teamcode.common.IDrive
 import org.firstinspires.ftc.teamcode.Kotlin.GamePad
 
 class MecanumDrive
