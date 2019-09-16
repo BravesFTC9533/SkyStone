@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.common;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.teamcode.Robot;
@@ -14,6 +15,7 @@ import org.firstinspires.ftc.teamcode.Robot;
 public class MecanumDrive implements IDrive {
 
     private final FtcGamePad driverGamepad;
+    private Gamepad gamepad1;
     //private final Robot robot;
 
     private static final double MIN_SPEED = 0.2;
@@ -24,8 +26,9 @@ public class MecanumDrive implements IDrive {
 
     boolean reverse = false;
 
-    public MecanumDrive(Robot robot, FtcGamePad driveGamepad){
+    public MecanumDrive(Robot robot, FtcGamePad driveGamepad, Gamepad gamepad1){
         this.driverGamepad = driveGamepad;
+        this.gamepad1 = gamepad1;
         this.fl = robot.frontLeft;
         this.fr = robot.frontRight;
         this.bl = robot.backLeft;
@@ -51,67 +54,18 @@ public class MecanumDrive implements IDrive {
 
     public void handle(){
 
-        //mechDrive.Drive(-gamepad1.left_stick_x, -gamepad1.left_stick_y, gamepad1.right_stick_x);
+        double r = Math.hypot(gamepad1.left_stick_x, gamepad1.left_stick_y);
+        double robotAngle = Math.atan2(gamepad1.left_stick_x, gamepad1.left_stick_y) - Math.PI / 4;
+        double rightX = gamepad1.right_stick_x;
+        final double v1 = r * Math.cos(robotAngle) - rightX;
+        final double v2 = r * Math.sin(robotAngle) + rightX;
+        final double v3 = r * Math.sin(robotAngle) - rightX;
+        final double v4 = r * Math.cos(robotAngle) + rightX;
 
-        double h, v, r;
-
-        h = -driverGamepad.getLeftStickX();
-        v = driverGamepad.getLeftStickY();
-        r = driverGamepad.getRightStickX();
-
-        if(Math.abs(h) < MIN_SPEED) {
-            h = 0;
-        }
-        if(Math.abs(v) < MIN_SPEED) {
-            v = 0;
-        }
-        if(Math.abs(r) < MIN_SPEED){
-            r = 0;
-        }
-
-        if(getIsReverse()) {
-            h *= -1;
-            v *= -1;
-        }
-
-
-        h = clipMotorPower(h);
-        v = clipMotorPower(v);
-        r = clipMotorPower(r);
-
-        // add vectors
-        double frontLeft =  v-h+r;
-        double frontRight = v+h-r;
-        double backRight =  v-h-r;
-        double backLeft =   v+h+r;
-
-        // since adding vectors can go over 1, figure out max to scale other wheels
-        double max = Math.max(
-                Math.abs(backLeft),
-                Math.max(
-                        Math.abs(backRight),
-                        Math.max(
-                                Math.abs(frontLeft), Math.abs(frontRight)
-                        )
-                )
-        );
-        // only need to scale power if max > 1
-        if(max > 1){
-            frontLeft = scalePower(frontLeft, max);
-            frontRight = scalePower(frontRight, max);
-            backLeft = scalePower(backLeft, max);
-            backRight = scalePower(backRight, max);
-        }
-
-        fl.setPower(frontLeft);
-        fr.setPower(frontRight);
-        bl.setPower(backLeft);
-        br.setPower(backRight);
-
-        //robot.Drive(frontLeft, frontRight, backLeft, backRight);
-
-
-
+        fl.setPower(v1);
+        fr.setPower(v2);
+        bl.setPower(v3);
+        br.setPower(v4);
 
     }
 
