@@ -33,7 +33,7 @@ public class AutonomousOpMode extends BaseLinearOpMode {
         telemetry.addData("Status", "Initialized");
         telemetry.update();
 
-        robot = new Robot(hardwareMap);
+        robot = new Robot(hardwareMap, telemetry);
 
         waitForStart();
         runtime.reset();

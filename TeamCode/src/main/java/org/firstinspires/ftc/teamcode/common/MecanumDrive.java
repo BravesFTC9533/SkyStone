@@ -17,6 +17,7 @@ public class MecanumDrive implements IDrive {
 
     private final FtcGamePad driverGamepad;
     private Gamepad gamepad1;
+    private Robot robot;
     //private final Robot robot;
 
     private static final double MIN_SPEED = 0.2;
@@ -24,10 +25,6 @@ public class MecanumDrive implements IDrive {
     private final DcMotor fr;
     private final DcMotor bl;
     private final DcMotor br;
-
-    private ModernRoboticsI2cGyro gyro;
-
-    private int rawX, rawY, rawZ, heading, integratedZ;
 
     boolean reverse = false;
 
@@ -38,7 +35,7 @@ public class MecanumDrive implements IDrive {
         this.fr = robot.frontRight;
         this.bl = robot.backLeft;
         this.br = robot.backRight;
-        gyro = robot.modernRoboticsI2cGyro;
+        this.robot = robot;
     }
 
     public MecanumDrive(DcMotor fl, DcMotor fr, DcMotor bl, DcMotor br, FtcGamePad driverGamepad) {
@@ -58,13 +55,7 @@ public class MecanumDrive implements IDrive {
         reverse = value;
     }
 
-    public void handle(){
-
-        rawX = gyro.rawX();
-        rawY = gyro.rawY();
-        rawZ = gyro.rawZ();
-        heading = gyro.getHeading();
-        integratedZ = gyro.getIntegratedZValue();
+    public void handle() {
 
         double r = -Math.hypot(gamepad1.left_stick_x, gamepad1.left_stick_y);
         double robotAngle = Math.atan2(gamepad1.left_stick_x, gamepad1.left_stick_y) - Math.PI / 4;
@@ -74,11 +65,10 @@ public class MecanumDrive implements IDrive {
         final double v3 = r * Math.sin(robotAngle) - rightX;
         final double v4 = r * Math.cos(robotAngle) + rightX;
 
-        fl.setPower(v1);
-        fr.setPower(v2);
-        bl.setPower(v3);
-        br.setPower(v4);
-
+        fl.setPower(v4);
+        fr.setPower(v1);
+        bl.setPower(v2);
+        br.setPower(v3);
     }
 
     @Override
@@ -88,7 +78,10 @@ public class MecanumDrive implements IDrive {
 
     @Override
     public void drive(double left, double right) {
-
+        fl.setPower(left);
+        bl.setPower(left);
+        fr.setPower(right);
+        br.setPower(right);
     }
 
     @Override
