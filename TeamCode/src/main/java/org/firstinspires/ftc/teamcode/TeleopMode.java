@@ -22,7 +22,7 @@ public class TeleopMode extends LinearOpMode implements FtcGamePad.ButtonHandler
         telemetry.addData("Status", "Initialized");
         telemetry.update();
 
-        robot = new Robot(hardwareMap);
+        robot = new Robot(hardwareMap, telemetry);
         driverGamePad = new FtcGamePad("Driver", gamepad1, this);
         drive = new MecanumDrive(robot, driverGamePad, gamepad1);
 
@@ -32,6 +32,7 @@ public class TeleopMode extends LinearOpMode implements FtcGamePad.ButtonHandler
         while (opModeIsActive()) {
             drive.handle();
             driverGamePad.update();
+            telemetry.update();
         }
     }
 

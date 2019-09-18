@@ -1,7 +1,10 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cGyro;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 public class Robot {
 
@@ -12,15 +15,24 @@ public class Robot {
             (WHEEL_DIAMETER_INCHES * 3.1415);
 
     public HardwareMap hardwareMap;
+    public ModernRoboticsI2cGyro modernRoboticsI2cGyro;
 
+    public Telemetry telemetry;
     public DcMotor frontLeft;
     public DcMotor frontRight;
     public DcMotor backLeft;
     public DcMotor backRight;
 
-    public Robot(HardwareMap hardwareMap) {
+    public Robot(HardwareMap hardwareMap, Telemetry telemetry) {
         this.hardwareMap = hardwareMap;
+        this.telemetry = telemetry;
         setupMotors();
+        modernRoboticsI2cGyro = hardwareMap.get(ModernRoboticsI2cGyro.class, "gyro");
+        telemetry.log().add("Gyro Calibrating. Do Not Move!");
+        telemetry.update();
+        modernRoboticsI2cGyro.calibrate();
+        telemetry.log().add("Gyro Calibrated!");
+        telemetry.update();
     }
 
     private void setupMotors() {

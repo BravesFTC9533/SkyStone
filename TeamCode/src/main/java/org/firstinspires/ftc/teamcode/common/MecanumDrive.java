@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.common;
 
+import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cGyro;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.util.Range;
@@ -24,6 +25,10 @@ public class MecanumDrive implements IDrive {
     private final DcMotor bl;
     private final DcMotor br;
 
+    private ModernRoboticsI2cGyro gyro;
+
+    private int rawX, rawY, rawZ, heading, integratedZ;
+
     boolean reverse = false;
 
     public MecanumDrive(Robot robot, FtcGamePad driveGamepad, Gamepad gamepad1){
@@ -33,6 +38,7 @@ public class MecanumDrive implements IDrive {
         this.fr = robot.frontRight;
         this.bl = robot.backLeft;
         this.br = robot.backRight;
+        gyro = robot.modernRoboticsI2cGyro;
     }
 
     public MecanumDrive(DcMotor fl, DcMotor fr, DcMotor bl, DcMotor br, FtcGamePad driverGamepad) {
@@ -54,9 +60,15 @@ public class MecanumDrive implements IDrive {
 
     public void handle(){
 
-        double r = Math.hypot(gamepad1.left_stick_x, gamepad1.left_stick_y);
+        rawX = gyro.rawX();
+        rawY = gyro.rawY();
+        rawZ = gyro.rawZ();
+        heading = gyro.getHeading();
+        integratedZ = gyro.getIntegratedZValue();
+
+        double r = -Math.hypot(gamepad1.left_stick_x, gamepad1.left_stick_y);
         double robotAngle = Math.atan2(gamepad1.left_stick_x, gamepad1.left_stick_y) - Math.PI / 4;
-        double rightX = gamepad1.right_stick_x;
+        double rightX = -gamepad1.right_stick_x;
         final double v1 = r * Math.cos(robotAngle) - rightX;
         final double v2 = r * Math.sin(robotAngle) + rightX;
         final double v3 = r * Math.sin(robotAngle) - rightX;
