@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.util.Range;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.Robot;
 
 
@@ -18,6 +19,7 @@ public class MecanumDrive implements IDrive {
     private final FtcGamePad driverGamepad;
     private Gamepad gamepad1;
     private Robot robot;
+    private Telemetry telemetry;
     //private final Robot robot;
 
     private static final double MIN_SPEED = 0.2;
@@ -28,9 +30,10 @@ public class MecanumDrive implements IDrive {
 
     boolean reverse = false;
 
-    public MecanumDrive(Robot robot, FtcGamePad driveGamepad, Gamepad gamepad1){
+    public MecanumDrive(Robot robot, Telemetry telemetry, FtcGamePad driveGamepad, Gamepad gamepad1){
         this.driverGamepad = driveGamepad;
         this.gamepad1 = gamepad1;
+        this.telemetry = telemetry;
         this.fl = robot.frontLeft;
         this.fr = robot.frontRight;
         this.bl = robot.backLeft;
@@ -39,7 +42,6 @@ public class MecanumDrive implements IDrive {
     }
 
     public MecanumDrive(DcMotor fl, DcMotor fr, DcMotor bl, DcMotor br, FtcGamePad driverGamepad) {
-
         this.fl = fl;
         this.fr = fr;
         this.bl = bl;
@@ -56,19 +58,32 @@ public class MecanumDrive implements IDrive {
     }
 
     public void handle() {
+        double leftPower;
+        double rightPower;
 
-        double r = -Math.hypot(gamepad1.left_stick_x, gamepad1.left_stick_y);
-        double robotAngle = Math.atan2(gamepad1.left_stick_x, gamepad1.left_stick_y) - Math.PI / 4;
-        double rightX = -gamepad1.right_stick_x;
-        final double v1 = r * Math.cos(robotAngle) - rightX;
-        final double v2 = r * Math.sin(robotAngle) + rightX;
-        final double v3 = r * Math.sin(robotAngle) - rightX;
-        final double v4 = r * Math.cos(robotAngle) + rightX;
+        double drive = -gamepad1.left_stick_y;
+        double turn  =  gamepad1.left_stick_x;
+        double strafe = gamepad1.right_stick_x;
 
-        fl.setPower(v4);
-        fr.setPower(v1);
-        bl.setPower(v2);
-        br.setPower(v3);
+        leftPower    = Range.clip(drive + turn, -1.0, 1.0) ;
+        rightPower   = Range.clip(drive - turn, -1.0, 1.0);
+
+        if(strafe > 0) {
+            robot.backLeft.setPower(strafe);
+            robot.frontLeft.setPower(strafe);
+            robot.backRight.setPower(-strafe);
+            robot.frontRight.setPower(-strafe);
+        } else if(strafe < 0) {
+            robot.backLeft.setPower(-strafe);
+            robot.frontLeft.setPower(-strafe);
+            robot.backRight.setPower(strafe);
+            robot.frontRight.setPower(strafe);
+        }
+
+        robot.frontLeft.setPower(leftPower);
+        robot.backLeft.setPower(leftPower);
+        robot.frontRight.setPower(rightPower);
+        robot.backRight.setPower(rightPower);
     }
 
     @Override

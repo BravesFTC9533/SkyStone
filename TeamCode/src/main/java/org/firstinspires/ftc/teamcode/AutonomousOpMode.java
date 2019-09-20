@@ -43,7 +43,12 @@ public class AutonomousOpMode extends BaseLinearOpMode {
                 case BLUE_BRICKS:
                     blueBricks();
                     break;
-
+                case RED_BRICKS:
+                    break;
+                case BLUE_BUILDING:
+                    break;
+                case RED_BUILDING:
+                    break;
             }
         }
     }
@@ -52,23 +57,24 @@ public class AutonomousOpMode extends BaseLinearOpMode {
         // Find Sticker Positions
         // I DONT KNOW HOW TO USE VUFORIA!!!!!!
         // Move Forward
-        robot.moveForwardByInches(24);
+        robot.moveForwardByInches(24, 1);
 
         // Move Back Slightly
-        robot.moveForwardByInches(2);
+        robot.moveForwardByInches(2, 1);
 
         // Turn 90 degrees Clockwise
 
         // Go Under Bridge
-        robot.moveForwardByInches(48);
+        robot.moveForwardByInches(48, 1);
 
         // Turn Right
 
         //Move Forward
-        robot.moveForwardByInches(12);
+        robot.moveForwardByInches(12, 1);
 
         // Drop Off Brick
 
         // Done
     }
+
 }

@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cGyro;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IntegratingGyroscope;
 
@@ -34,6 +35,11 @@ public class Robot {
         frontRight = hardwareMap.dcMotor.get("fr");
         backLeft = hardwareMap.dcMotor.get("bl");
         backRight = hardwareMap.dcMotor.get("br");
+
+        frontRight.setDirection(DcMotor.Direction.FORWARD);
+        backRight.setDirection(DcMotor.Direction.FORWARD);
+        frontLeft.setDirection(DcMotor.Direction.REVERSE);
+        backLeft.setDirection(DcMotor.Direction.REVERSE);
     }
 
     public void setMotorsMode(DcMotor.RunMode runMode) {
@@ -43,17 +49,26 @@ public class Robot {
         backRight.setMode(runMode);
     }
 
-    public void moveMotorsByTick(int ticks) {
-        setMotorsMode(DcMotor.RunMode.RUN_TO_POSITION);
-        frontLeft.setTargetPosition(frontLeft.getCurrentPosition() + ticks);
-        frontRight.setTargetPosition(frontRight.getCurrentPosition() + ticks);
-        backLeft.setTargetPosition(backLeft.getCurrentPosition() + ticks);
-        backRight.setTargetPosition(backRight.getCurrentPosition() + ticks);
-        setMotorsMode(DcMotor.RunMode.RUN_USING_ENCODER);
+    public void setMotorPowers(double power) {
+        frontLeft.setPower(power);
+        frontRight.setPower(power);
+        backRight.setPower(power);
+        backLeft.setPower(power);
     }
 
-    public void moveForwardByInches(int inches) {
-        moveMotorsByTick((int) (inches * COUNTS_PER_INCH));
+    public void setTargetPositions(int targetPositions) {
+        frontLeft.setTargetPosition(targetPositions);
+        frontRight.setTargetPosition(targetPositions);
+        backRight.setTargetPosition(targetPositions);
+        backLeft.setTargetPosition(targetPositions);
+    }
+
+    public void moveForwardByInches(int inches, double power) {
+        setTargetPositions(288);
+        setMotorPowers(power);
+        if(frontLeft.getCurrentPosition() >= 100) {
+            setMotorPowers(0);
+        }
     }
 
 }
