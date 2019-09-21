@@ -38,43 +38,33 @@ public class AutonomousOpMode extends BaseLinearOpMode {
         waitForStart();
         runtime.reset();
 
+        drive();
+
         while (opModeIsActive()) {
-            switch (startingPosition) {
-                case BLUE_BRICKS:
-                    blueBricks();
-                    break;
-                case RED_BRICKS:
-                    break;
-                case BLUE_BUILDING:
-                    break;
-                case RED_BUILDING:
-                    break;
-            }
+            telemetry.addData("Encoder Ticks", robot.frontLeft.getCurrentPosition());
+            telemetry.update();
+
+
+//            switch (startingPosition) {
+//                case BLUE_BRICKS:
+//                    blueBricks();
+//                    break;
+//                case RED_BRICKS:
+//                    break;
+//                case BLUE_BUILDING:
+//                    break;
+//                case RED_BUILDING:
+//                    break;
+//            }
         }
     }
 
+    private void drive() {
+        robot.moveByEncoderTicks(100, 1);
+    }
+
     private void blueBricks() {
-        // Find Sticker Positions
-        // I DONT KNOW HOW TO USE VUFORIA!!!!!!
-        // Move Forward
-        robot.moveForwardByInches(24, 1);
 
-        // Move Back Slightly
-        robot.moveForwardByInches(2, 1);
-
-        // Turn 90 degrees Clockwise
-
-        // Go Under Bridge
-        robot.moveForwardByInches(48, 1);
-
-        // Turn Right
-
-        //Move Forward
-        robot.moveForwardByInches(12, 1);
-
-        // Drop Off Brick
-
-        // Done
     }
 
 }

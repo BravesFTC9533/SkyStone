@@ -61,29 +61,41 @@ public class MecanumDrive implements IDrive {
         double leftPower;
         double rightPower;
 
-        double drive = -gamepad1.left_stick_y;
-        double turn  =  gamepad1.left_stick_x;
-        double strafe = gamepad1.right_stick_x;
+        double drive =  -gamepad1.left_stick_y;
+        double turn  =  -gamepad1.left_stick_x;
+        double strafe = -gamepad1.right_stick_x;
 
         leftPower    = Range.clip(drive + turn, -1.0, 1.0) ;
         rightPower   = Range.clip(drive - turn, -1.0, 1.0);
 
         if(strafe > 0) {
-            robot.backLeft.setPower(strafe);
-            robot.frontLeft.setPower(strafe);
-            robot.backRight.setPower(-strafe);
-            robot.frontRight.setPower(-strafe);
-        } else if(strafe < 0) {
-            robot.backLeft.setPower(-strafe);
-            robot.frontLeft.setPower(-strafe);
-            robot.backRight.setPower(strafe);
             robot.frontRight.setPower(strafe);
+            robot.backRight.setPower(-strafe);
+            robot.frontLeft.setPower(-strafe);
+            robot.backLeft.setPower(strafe);
+        } else if(strafe < 0) {
+            robot.frontRight.setPower(strafe);
+            robot.backRight.setPower(-strafe);
+            robot.frontLeft.setPower(-strafe);
+            robot.backLeft.setPower(strafe);
         }
 
         robot.frontLeft.setPower(leftPower);
         robot.backLeft.setPower(leftPower);
         robot.frontRight.setPower(rightPower);
         robot.backRight.setPower(rightPower);
+
+        handleGamepad();
+    }
+
+    private void handleGamepad() {
+        if(gamepad1.right_bumper) {
+            robot.setMotorPowers(-1);
+            robot.setMotorsMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            robot.setMotorPowers(0);
+        } else {
+            robot.setMotorsMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        }
     }
 
     @Override

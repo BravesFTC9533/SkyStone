@@ -7,18 +7,21 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IntegratingGyroscope;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.common.LiftController;
 
 public class Robot {
 
-    public static final double     REV_COUNTS_PER_MOTOR_REV = 288;      // eg: Rev Side motor
-    static final double            DRIVE_GEAR_REDUCTION    = 60.0 / 125.0 ;             // This is < 1.0 if geared UP
-    static final double            WHEEL_DIAMETER_INCHES   = 3.543 ;           // For figuring circumference
-    public static final double     COUNTS_PER_INCH = (REV_COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) /
+    public static final double     NEVE_COUNTS_PER_MOTOR_NEVE = 1120;      // eg: Rev Side motor
+    static final double            DRIVE_GEAR_REDUCTION    = 45.0 / 35.0;             // This is < 1.0 if geared UP
+    static final double            WHEEL_DIAMETER_INCHES   = 4.0 ;           // For figuring circumference
+    public static final double     COUNTS_PER_INCH = (NEVE_COUNTS_PER_MOTOR_NEVE * DRIVE_GEAR_REDUCTION) /
             (WHEEL_DIAMETER_INCHES * 3.1415);
 
     public HardwareMap hardwareMap;
 
     public Telemetry telemetry;
+    public LiftController lift;
+
     public DcMotor frontLeft;
     public DcMotor frontRight;
     public DcMotor backLeft;
@@ -27,6 +30,7 @@ public class Robot {
     public Robot(HardwareMap hardwareMap, Telemetry telemetry) {
         this.hardwareMap = hardwareMap;
         this.telemetry = telemetry;
+       // this.lift = new LiftController(hardwareMap);
         setupMotors();
     }
 
@@ -56,19 +60,26 @@ public class Robot {
         backLeft.setPower(power);
     }
 
-    public void setTargetPositions(int targetPositions) {
-        frontLeft.setTargetPosition(targetPositions);
-        frontRight.setTargetPosition(targetPositions);
-        backRight.setTargetPosition(targetPositions);
-        backLeft.setTargetPosition(targetPositions);
+    public void setTargetPosition(double ticks) {
+        frontLeft.setTargetPosition((int) ticks);
+        frontRight.setTargetPosition((int) ticks);
+        backRight.setTargetPosition((int) ticks);
+        backLeft.setTargetPosition((int) ticks);
+    }
+
+    public void resetEncoders() {
+        setMotorsMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+    }
+
+    public void moveByEncoderTicks(int ticks, double speed) {
+        resetEncoders();
+        setTargetPosition(ticks);
+        setMotorsMode(DcMotor.RunMode.RUN_TO_POSITION);
+        setMotorPowers(speed);
     }
 
     public void moveForwardByInches(int inches, double power) {
-        setTargetPositions(288);
-        setMotorPowers(power);
-        if(frontLeft.getCurrentPosition() >= 100) {
-            setMotorPowers(0);
-        }
+
     }
 
 }
