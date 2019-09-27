@@ -90,11 +90,11 @@ public class MecanumDrive implements IDrive {
 
     private void handleGamepad() {
         if(gamepad1.right_bumper) {
-            robot.setMotorPowers(-1);
-            robot.setMotorsMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            robot.setMotorPowers(0);
+            robot.setSpeed(-1);
+            robot.setMotorMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            robot.setSpeed(0);
         } else {
-            robot.setMotorsMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            robot.setMotorMode(DcMotor.RunMode.RUN_USING_ENCODER);
         }
     }
 

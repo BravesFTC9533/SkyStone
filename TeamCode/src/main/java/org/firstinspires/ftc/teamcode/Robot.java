@@ -46,36 +46,38 @@ public class Robot {
         backLeft.setDirection(DcMotor.Direction.REVERSE);
     }
 
-    public void setMotorsMode(DcMotor.RunMode runMode) {
-        frontLeft.setMode(runMode);
-        frontRight.setMode(runMode);
-        backLeft.setMode(runMode);
-        backRight.setMode(runMode);
+    public void setMotorMode(DcMotor.RunMode mode) {
+        frontLeft.setMode(mode);
+        frontRight.setMode(mode);
+        backLeft.setMode(mode);
+        backRight.setMode(mode);
     }
 
-    public void setMotorPowers(double power) {
-        frontLeft.setPower(power);
-        frontRight.setPower(power);
-        backRight.setPower(power);
-        backLeft.setPower(power);
+    private void setEncoderTicks(int ticks) {
+        frontLeft.setTargetPosition(ticks);
+        frontRight.setTargetPosition(ticks);
+        backLeft.setTargetPosition(ticks);
+        backRight.setTargetPosition(ticks);
     }
 
-    public void setTargetPosition(double ticks) {
-        frontLeft.setTargetPosition((int) ticks);
-        frontRight.setTargetPosition((int) ticks);
-        backRight.setTargetPosition((int) ticks);
-        backLeft.setTargetPosition((int) ticks);
-    }
-
-    public void resetEncoders() {
-        setMotorsMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+    public void setSpeed(double speed) {
+        frontRight.setPower(speed);
+        frontLeft.setPower(speed);
+        backRight.setPower(speed);
+        backLeft.setPower(speed);
     }
 
     public void moveByEncoderTicks(int ticks, double speed) {
-        resetEncoders();
-        setTargetPosition(ticks);
-        setMotorsMode(DcMotor.RunMode.RUN_TO_POSITION);
-        setMotorPowers(speed);
+        setMotorMode(DcMotor.RunMode.RUN_TO_POSITION);
+        setEncoderTicks(ticks);
+        setSpeed(speed);
+    }
+
+    public boolean isBusy(){
+        if(frontLeft.isBusy() || frontRight.isBusy() || backLeft.isBusy() || backRight.isBusy()) {
+            return true;
+        }
+        return false;
     }
 
     public void moveForwardByInches(int inches, double power) {
