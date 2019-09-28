@@ -1,12 +1,7 @@
 package org.firstinspires.ftc.teamcode.common;
 
-import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cGyro;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.util.Range;
-
-import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.Robot;
 
 
 /**
@@ -17,9 +12,6 @@ import org.firstinspires.ftc.teamcode.Robot;
 public class MecanumDrive implements IDrive {
 
     private final FtcGamePad driverGamepad;
-    private Gamepad gamepad1;
-    private Robot robot;
-    private Telemetry telemetry;
     //private final Robot robot;
 
     private static final double MIN_SPEED = 0.2;
@@ -29,17 +21,11 @@ public class MecanumDrive implements IDrive {
     private final DcMotor br;
 
     boolean reverse = false;
-
-    public MecanumDrive(Robot robot, Telemetry telemetry, FtcGamePad driveGamepad, Gamepad gamepad1){
-        this.driverGamepad = driveGamepad;
-        this.gamepad1 = gamepad1;
-        this.telemetry = telemetry;
-        this.fl = robot.frontLeft;
-        this.fr = robot.frontRight;
-        this.bl = robot.backLeft;
-        this.br = robot.backRight;
-        this.robot = robot;
-    }
+//
+//    public MecanumDrive(Robot robot, FtcGamePad driveGamepad){
+//        this.driverGamepad = driveGamepad;
+//        this.robot = robot;
+//    }
 
     public MecanumDrive(DcMotor fl, DcMotor fr, DcMotor bl, DcMotor br, FtcGamePad driverGamepad) {
         this.fl = fl;
@@ -57,45 +43,70 @@ public class MecanumDrive implements IDrive {
         reverse = value;
     }
 
-    public void handle() {
-        double leftPower;
-        double rightPower;
+    public void handle(){
 
-        double drive =  -gamepad1.left_stick_y;
-        double turn  =  -gamepad1.left_stick_x;
-        double strafe = -gamepad1.right_stick_x;
+        //mechDrive.Drive(-gamepad1.left_stick_x, -gamepad1.left_stick_y, gamepad1.right_stick_x);
 
-        leftPower    = Range.clip(drive + turn, -1.0, 1.0) ;
-        rightPower   = Range.clip(drive - turn, -1.0, 1.0);
+        double h, v, r;
 
-        if(strafe > 0) {
-            robot.frontRight.setPower(strafe);
-            robot.backRight.setPower(-strafe);
-            robot.frontLeft.setPower(-strafe);
-            robot.backLeft.setPower(strafe);
-        } else if(strafe < 0) {
-            robot.frontRight.setPower(strafe);
-            robot.backRight.setPower(-strafe);
-            robot.frontLeft.setPower(-strafe);
-            robot.backLeft.setPower(strafe);
+        h = -driverGamepad.getLeftStickX();
+        v = driverGamepad.getLeftStickY();
+        r = driverGamepad.getRightStickX();
+
+        if(Math.abs(h) < MIN_SPEED) {
+            h = 0;
+        }
+        if(Math.abs(v) < MIN_SPEED) {
+            v = 0;
+        }
+        if(Math.abs(r) < MIN_SPEED){
+            r = 0;
         }
 
-        robot.frontLeft.setPower(leftPower);
-        robot.backLeft.setPower(leftPower);
-        robot.frontRight.setPower(rightPower);
-        robot.backRight.setPower(rightPower);
-
-        handleGamepad();
-    }
-
-    private void handleGamepad() {
-        if(gamepad1.right_bumper) {
-            robot.setSpeed(-1);
-            robot.setMotorMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            robot.setSpeed(0);
-        } else {
-            robot.setMotorMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        if(getIsReverse()) {
+            h *= -1;
+            v *= -1;
         }
+
+
+        h = clipMotorPower(h);
+        v = clipMotorPower(v);
+        r = clipMotorPower(r);
+
+        // add vectors
+        double frontLeft =  v-h+r;
+        double frontRight = v+h-r;
+        double backRight =  v-h-r;
+        double backLeft =   v+h+r;
+
+        // since adding vectors can go over 1, figure out max to scale other wheels
+        double max = Math.max(
+                Math.abs(backLeft),
+                Math.max(
+                        Math.abs(backRight),
+                        Math.max(
+                                Math.abs(frontLeft), Math.abs(frontRight)
+                        )
+                )
+        );
+        // only need to scale power if max > 1
+        if(max > 1){
+            frontLeft = scalePower(frontLeft, max);
+            frontRight = scalePower(frontRight, max);
+            backLeft = scalePower(backLeft, max);
+            backRight = scalePower(backRight, max);
+        }
+
+        fl.setPower(frontLeft);
+        fr.setPower(frontRight);
+        bl.setPower(backLeft);
+        br.setPower(backRight);
+
+        //robot.Drive(frontLeft, frontRight, backLeft, backRight);
+
+
+
+
     }
 
     @Override
@@ -105,10 +116,7 @@ public class MecanumDrive implements IDrive {
 
     @Override
     public void drive(double left, double right) {
-        fl.setPower(left);
-        bl.setPower(left);
-        fr.setPower(right);
-        br.setPower(right);
+
     }
 
     @Override

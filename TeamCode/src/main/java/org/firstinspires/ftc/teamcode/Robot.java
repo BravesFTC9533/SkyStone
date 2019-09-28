@@ -40,10 +40,10 @@ public class Robot {
         backLeft = hardwareMap.dcMotor.get("bl");
         backRight = hardwareMap.dcMotor.get("br");
 
-        frontRight.setDirection(DcMotor.Direction.FORWARD);
-        backRight.setDirection(DcMotor.Direction.FORWARD);
-        frontLeft.setDirection(DcMotor.Direction.REVERSE);
-        backLeft.setDirection(DcMotor.Direction.REVERSE);
+        frontRight.setDirection(DcMotor.Direction.REVERSE);
+        backRight.setDirection(DcMotor.Direction.REVERSE);
+        frontLeft.setDirection(DcMotor.Direction.FORWARD);
+        backLeft.setDirection(DcMotor.Direction.FORWARD);
     }
 
     public void setMotorMode(DcMotor.RunMode mode) {
@@ -51,7 +51,7 @@ public class Robot {
         frontRight.setMode(mode);
         backLeft.setMode(mode);
         backRight.setMode(mode);
-    }
+}
 
     private void setEncoderTicks(int ticks) {
         frontLeft.setTargetPosition(ticks);
