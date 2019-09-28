@@ -44,6 +44,9 @@ public class Robot {
         backRight.setDirection(DcMotor.Direction.REVERSE);
         frontLeft.setDirection(DcMotor.Direction.FORWARD);
         backLeft.setDirection(DcMotor.Direction.FORWARD);
+
+        setMotorMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        setMotorMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
     public void setMotorMode(DcMotor.RunMode mode) {
@@ -51,13 +54,13 @@ public class Robot {
         frontRight.setMode(mode);
         backLeft.setMode(mode);
         backRight.setMode(mode);
-}
+    }
 
     private void setEncoderTicks(int ticks) {
-        frontLeft.setTargetPosition(ticks);
-        frontRight.setTargetPosition(ticks);
-        backLeft.setTargetPosition(ticks);
-        backRight.setTargetPosition(ticks);
+        frontLeft.setTargetPosition(ticks + frontLeft.getCurrentPosition());
+        frontRight.setTargetPosition(ticks + frontRight.getCurrentPosition());
+        backLeft.setTargetPosition(ticks + backLeft.getCurrentPosition());
+        backRight.setTargetPosition(ticks + backRight.getCurrentPosition());
     }
 
     public void setSpeed(double speed) {
@@ -68,9 +71,11 @@ public class Robot {
     }
 
     public void moveByEncoderTicks(int ticks, double speed) {
-        setMotorMode(DcMotor.RunMode.RUN_TO_POSITION);
         setEncoderTicks(ticks);
+        setMotorMode(DcMotor.RunMode.RUN_TO_POSITION);
         setSpeed(speed);
+        setMotorMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        while(isBusy()) {}
     }
 
     public boolean isBusy(){
@@ -81,7 +86,7 @@ public class Robot {
     }
 
     public void moveForwardByInches(int inches, double power) {
-
+        moveByEncoderTicks((int) COUNTS_PER_INCH * inches, power);
     }
 
 }

@@ -37,33 +37,14 @@ public class AutonomousOpMode extends BaseLinearOpMode {
         waitForStart();
         runtime.reset();
 
-        drive();
-
-        while (opModeIsActive()) {
-            telemetry.addData("Encoder Ticks", robot.frontLeft.getCurrentPosition());
-            telemetry.update();
-
-            robot.frontRight.setPower(1);
-//            switch (startingPosition) {
-//                case BLUE_BRICKS:
-//                    blueBricks();
-//                    break;
-//                case RED_BRICKS:
-//                    break;
-//                case BLUE_BUILDING:
-//                    break;
-//                case RED_BUILDING:
-//                    break;
-//            }
+        if(startingPosition == StartingPosition.BLUE_BRICKS) {
+            blueBricks();
         }
     }
 
-    private void drive() {
-        robot.moveByEncoderTicks(100, 1);
-    }
-
     private void blueBricks() {
-
+        // Move 96 in. forward
+        robot.moveByEncoderTicks(1000, 1);
     }
 
 }

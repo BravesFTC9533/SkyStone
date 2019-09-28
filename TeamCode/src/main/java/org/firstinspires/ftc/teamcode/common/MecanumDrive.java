@@ -110,7 +110,35 @@ public class MecanumDrive implements IDrive {
     }
 
     @Override
-    public void drive(double ly, double lx, double rx) {
+    public void drive(double v, double h, double r) {
+        // add vectors
+        double frontLeft =  v-h+r;
+        double frontRight = v+h-r;
+        double backRight =  v-h-r;
+        double backLeft =   v+h+r;
+
+        // since adding vectors can go over 1, figure out max to scale other wheels
+        double max = Math.max(
+                Math.abs(backLeft),
+                Math.max(
+                        Math.abs(backRight),
+                        Math.max(
+                                Math.abs(frontLeft), Math.abs(frontRight)
+                        )
+                )
+        );
+        // only need to scale power if max > 1
+        if(max > 1){
+            frontLeft = scalePower(frontLeft, max);
+            frontRight = scalePower(frontRight, max);
+            backLeft = scalePower(backLeft, max);
+            backRight = scalePower(backRight, max);
+        }
+
+        fl.setPower(frontLeft);
+        fr.setPower(frontRight);
+        bl.setPower(backLeft);
+        br.setPower(backRight);
 
     }
 
