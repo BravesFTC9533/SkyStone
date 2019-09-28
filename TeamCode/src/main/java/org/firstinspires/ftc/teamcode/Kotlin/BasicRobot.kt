@@ -1,11 +1,15 @@
 package org.firstinspires.ftc.teamcode.Kotlin
 
+import com.qualcomm.robotcore.hardware.DcMotor
 import com.qualcomm.robotcore.hardware.DcMotorEx
+import com.qualcomm.robotcore.hardware.DcMotorSimple
 import com.qualcomm.robotcore.hardware.HardwareMap
+import org.firstinspires.ftc.teamcode.common.HardwareManager
 
-class BasicRobot {
+class FourWheelRobot {
 
-    var hwMap: HardwareMap
+
+    val hwManager: HardwareManager
 
     var motorBL: DcMotorEx
     var motorBR: DcMotorEx
@@ -15,21 +19,30 @@ class BasicRobot {
 
 
 
-    constructor(hwMap: HardwareMap){
-        this.hwMap = hwMap
+    constructor(hwManager: HardwareManager){
+        this.hwManager = hwManager
 
-        this.motorBL = getMotor("motorBL")
-        this.motorBR = getMotor("motorBR")
+        this.motorBL = hwManager.getMotor("bl")
+        this.motorBL.direction = DcMotorSimple.Direction.FORWARD
 
-        this.motorFL = getMotor("motorFL")
-        this.motorFR = getMotor("motorFR")
+        this.motorFL = hwManager.getMotor("fl")
+        this.motorFL.direction= DcMotorSimple.Direction.FORWARD
+
+        this.motorFR = hwManager.getMotor("fr")
+        this.motorFR.direction = DcMotorSimple.Direction.REVERSE
+
+        this.motorBR = hwManager.getMotor("br")
+        this.motorBR.direction = DcMotorSimple.Direction.REVERSE
 
 
     }
 
 
-    private fun getMotor(deviceName: String) : DcMotorEx {
-        return hwMap.get(DcMotorEx::class.java, deviceName)
+    fun setMode(mode: DcMotor.RunMode) {
+        this.motorBL.mode = mode
+        this.motorBR.mode = mode
+        this.motorFL.mode = mode
+        this.motorFR.mode = mode
     }
 
 }
