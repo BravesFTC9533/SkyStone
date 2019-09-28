@@ -49,9 +49,9 @@ public class MecanumDrive implements IDrive {
 
         double h, v, r;
 
-        h = -driverGamepad.getLeftStickX();
+        h = driverGamepad.getLeftStickX();
         v = driverGamepad.getLeftStickY();
-        r = driverGamepad.getRightStickX();
+        r = -driverGamepad.getRightStickX();
 
         if(Math.abs(h) < MIN_SPEED) {
             h = 0;

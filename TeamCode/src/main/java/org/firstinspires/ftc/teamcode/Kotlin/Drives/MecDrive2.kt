@@ -34,7 +34,7 @@ class MecDrive2 : IDrive2 {
     }
 
     override fun manualDrive() {
-        setAxial(-gamePad.getLeftStickY())
+        setAxial(gamePad.getLeftStickY())
         setLateral(gamePad.getLeftStickX())
         setYaw(-gamePad.getRightStickX())
     }

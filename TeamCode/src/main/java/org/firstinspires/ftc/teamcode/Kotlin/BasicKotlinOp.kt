@@ -9,7 +9,7 @@ import org.firstinspires.ftc.teamcode.Kotlin.Drives.MecanumDrive
 import org.firstinspires.ftc.teamcode.common.HardwareManager
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode as LinearOpMode
 
-@TeleOp(name = "Concept: Telemetry", group = "Concept")
+@TeleOp(name = "Kotlin Hot", group = "Concept")
 class BasicKotlinOp : LinearOpMode(), IButtonHandler {
 
 

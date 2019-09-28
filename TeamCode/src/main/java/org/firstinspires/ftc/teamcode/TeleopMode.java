@@ -8,7 +8,6 @@ import org.firstinspires.ftc.teamcode.common.FtcGamePad;
 import org.firstinspires.ftc.teamcode.common.MecanumDrive;
 
 @TeleOp(name="Java: Teleop", group="Java")
-
 public class TeleopMode extends LinearOpMode implements FtcGamePad.ButtonHandler {
 
     // Declare OpMode members.
