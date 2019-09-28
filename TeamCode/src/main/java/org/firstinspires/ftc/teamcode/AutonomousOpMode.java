@@ -10,8 +10,7 @@ import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.teamcode.common.BaseLinearOpMode;
 
-@Autonomous(name="Java: Autonomous", group="Java")
-
+@Autonomous(name = "Java: Autonomous", group = "Concept")
 public class AutonomousOpMode extends BaseLinearOpMode {
 
     private ElapsedTime runtime = new ElapsedTime();
@@ -38,7 +37,7 @@ public class AutonomousOpMode extends BaseLinearOpMode {
         waitForStart();
         runtime.reset();
 
-        //drive();
+        drive();
 
         while (opModeIsActive()) {
             telemetry.addData("Encoder Ticks", robot.frontLeft.getCurrentPosition());
