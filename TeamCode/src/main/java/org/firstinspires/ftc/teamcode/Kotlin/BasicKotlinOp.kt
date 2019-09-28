@@ -19,7 +19,11 @@ class BasicKotlinOp : LinearOpMode(), IButtonHandler {
 
     private lateinit var ftcGamepad: GamePad
 
+    var nav = Robot_Navigation()
+
     private lateinit var drive: IDrive2
+
+    val TARGET_DISTANCE = 400.0    // Hold robot's center 400 mm from target
 
     override fun runOpMode() {
 
@@ -33,23 +37,38 @@ class BasicKotlinOp : LinearOpMode(), IButtonHandler {
         drive = MecDrive2(ftcGamepad, basicRobot)
 
 
+        drive.initDrive()
+        nav.initVuforia(drive)
+
+        nav.activateTracking()
 
         while(!(isStarted || isStopRequested))
         {
             idle()
         }
 
+
         while(opModeIsActive())
         {
+
+            telemetry.addData(">", "Press Left Bumper to track target")
+
             telemetry.addData("voltage", "%.1f volts") { getBatteryVoltage() }
 
+            if(nav.targetsAreVisible() && gamepad.left_bumper) {
+                nav.cruseControl(TARGET_DISTANCE)
+            } else {
+                drive.manualDrive()
+            }
 
-            drive.manualDrive()
             drive.moveRobot()
 
+            telemetry.update()
         }
 
 
+        telemetry.addData(">", "Shutting Down. Bye!")
+        telemetry.update()
     }
 
     internal fun getBatteryVoltage(): Double {
