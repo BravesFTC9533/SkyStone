@@ -44,7 +44,6 @@ public class AutonomousOpMode extends BaseLinearOpMode {
 
     private void blueBricks() {
         // Move 96 in. forward
-        robot.moveByEncoderTicks(1000, 1);
     }
 
 }

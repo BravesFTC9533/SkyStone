@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.common.FtcGamePad;
+import org.firstinspires.ftc.teamcode.controllers.LiftController;
 import org.firstinspires.ftc.teamcode.common.MecanumDrive;
 
 @TeleOp(name="Java: Teleop", group="Java")
@@ -15,6 +16,8 @@ public class TeleopMode extends LinearOpMode implements FtcGamePad.ButtonHandler
     private Robot robot;
     private MecanumDrive drive;
     private FtcGamePad driverGamePad;
+    private FtcGamePad operatorGamePad;
+    private LiftController liftController;
 
     @Override
     public void runOpMode() {
@@ -23,6 +26,8 @@ public class TeleopMode extends LinearOpMode implements FtcGamePad.ButtonHandler
 
         robot = new Robot(hardwareMap, telemetry);
         driverGamePad = new FtcGamePad("Driver", gamepad1, this);
+        operatorGamePad = new FtcGamePad("Operator", gamepad2, this);
+        liftController = new LiftController(hardwareMap);
         drive = new MecanumDrive(robot.frontLeft, robot.frontRight, robot.backLeft, robot.backRight, driverGamePad);
 
         waitForStart();
@@ -37,6 +42,6 @@ public class TeleopMode extends LinearOpMode implements FtcGamePad.ButtonHandler
 
     @Override
     public void gamepadButtonEvent(FtcGamePad gamepad, int button, boolean pressed) {
-
+        liftController.gamepadButtonEvent(gamepad, button, pressed);
     }
 }

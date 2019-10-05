@@ -1,9 +1,12 @@
-package org.firstinspires.ftc.teamcode.common;
+package org.firstinspires.ftc.teamcode.controllers;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-public class LiftController {
+import org.firstinspires.ftc.teamcode.common.BaseController;
+import org.firstinspires.ftc.teamcode.common.FtcGamePad;
+
+public class LiftController extends BaseController {
 
     public static double MAX_LIFT_HEIGHT_IN_TICKS = 1000.0;
     public static double LIFT_SPEED = 1.0;
@@ -11,7 +14,8 @@ public class LiftController {
     public DcMotor lift;
 
     public LiftController(HardwareMap hardwareMap) {
-        this.lift = hardwareMap.dcMotor.get("lift");
+        super(hardwareMap);
+        lift = hardwareMap.dcMotor.get("lift");
     }
 
     public void stop() {
@@ -33,4 +37,19 @@ public class LiftController {
         }
     }
 
+    @Override
+    public void gamepadButtonEvent(FtcGamePad gamepad, int button, boolean pressed) {
+        switch(button) {
+            case FtcGamePad.GAMEPAD_A:
+                if(pressed) {
+                    lift.setPower(1);
+                }
+                break;
+            case FtcGamePad.GAMEPAD_Y:
+                if(pressed) {
+                    lift.setPower(-1);
+                }
+                break;
+        }
+    }
 }

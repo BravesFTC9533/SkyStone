@@ -1,13 +1,9 @@
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cGyro;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.IntegratingGyroscope;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.common.LiftController;
 
 public class Robot {
 
@@ -20,7 +16,6 @@ public class Robot {
     public HardwareMap hardwareMap;
 
     public Telemetry telemetry;
-    public LiftController lift;
 
     public DcMotor frontLeft;
     public DcMotor frontRight;
@@ -30,7 +25,6 @@ public class Robot {
     public Robot(HardwareMap hardwareMap, Telemetry telemetry) {
         this.hardwareMap = hardwareMap;
         this.telemetry = telemetry;
-       // this.lift = new LiftController(hardwareMap);
         setupMotors();
     }
 
