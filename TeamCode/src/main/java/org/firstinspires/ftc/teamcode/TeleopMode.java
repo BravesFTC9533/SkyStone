@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.common.FtcGamePad;
 import org.firstinspires.ftc.teamcode.controllers.LiftController;
-import org.firstinspires.ftc.teamcode.common.MecanumDrive;
+import org.firstinspires.ftc.teamcode.drive.MecanumDrive;
 
 @TeleOp(name="Java: Teleop", group="Java")
 public class TeleopMode extends LinearOpMode implements FtcGamePad.ButtonHandler {

@@ -18,8 +18,6 @@ public class AutonomousOpMode extends BaseLinearOpMode {
 
     private StartingPosition startingPosition = StartingPosition.BLUE_BRICKS;
 
-    private boolean[] stickerPositions = new boolean[6];
-
     public enum StartingPosition {
         BLUE_BUILDING,
         BLUE_BRICKS,
@@ -37,13 +35,38 @@ public class AutonomousOpMode extends BaseLinearOpMode {
         waitForStart();
         runtime.reset();
 
-        if(startingPosition == StartingPosition.BLUE_BRICKS) {
-            blueBricks();
+        switch(startingPosition) {
+            case BLUE_BRICKS:
+                blueBricks();
+                break;
+            case BLUE_BUILDING:
+                blueBuilding();
+                break;
+            case RED_BRICKS:
+                redBricks();
+                break;
+            case RED_BUILDING:
+                redBuilding();
+                break;
         }
     }
 
     private void blueBricks() {
-        // Move 96 in. forward
+
     }
+
+    private void redBricks() {
+
+    }
+
+    private void blueBuilding() {
+
+    }
+
+    private void redBuilding() {
+
+    }
+
+
 
 }

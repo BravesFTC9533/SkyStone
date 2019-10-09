@@ -4,8 +4,6 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import com.qualcomm.robotcore.hardware.Gamepad
 import org.firstinspires.ftc.teamcode.Kotlin.Drives.IDrive2
 import org.firstinspires.ftc.teamcode.Kotlin.Drives.MecDrive2
-import org.firstinspires.ftc.teamcode.common.IDrive
-import org.firstinspires.ftc.teamcode.Kotlin.Drives.MecanumDrive
 import org.firstinspires.ftc.teamcode.common.HardwareManager
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode as LinearOpMode
 

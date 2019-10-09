@@ -1,7 +1,9 @@
-package org.firstinspires.ftc.teamcode.common;
+package org.firstinspires.ftc.teamcode.drive;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.Range;
+
+import org.firstinspires.ftc.teamcode.common.FtcGamePad;
 
 
 /**
@@ -51,7 +53,7 @@ public class MecanumDrive implements IDrive {
 
         h = driverGamepad.getLeftStickX();
         v = driverGamepad.getLeftStickY();
-        r = -driverGamepad.getRightStickX();
+        r = driverGamepad.getRightStickX();
 
         if(Math.abs(h) < MIN_SPEED) {
             h = 0;

@@ -42,12 +42,16 @@ public class LiftController extends BaseController {
         switch(button) {
             case FtcGamePad.GAMEPAD_A:
                 if(pressed) {
-                    lift.setPower(1);
+                    lift.setPower(-1);
+                } else{
+                    lift.setPower(0);
                 }
                 break;
             case FtcGamePad.GAMEPAD_Y:
                 if(pressed) {
-                    lift.setPower(-1);
+                    lift.setPower(1);
+                } else {
+                    lift.setPower(0);
                 }
                 break;
         }
