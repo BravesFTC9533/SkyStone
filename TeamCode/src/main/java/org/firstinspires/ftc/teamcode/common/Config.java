@@ -21,12 +21,9 @@ public class Config {
             }
         }
     }
-    public Position getPosition() {
-       return _position;
-    }
-    public void setPosition(Position position) {
-        this._position = position;
-    }
+
+    public static final String MAX_LIFT_TICKS = "MaxLiftTicks";
+    public static int _maxLiftTicks;
 
     public Config(Context context) {
         sp = context.getSharedPreferences(PREFERENCES, Context.MODE_PRIVATE);
@@ -37,12 +34,29 @@ public class Config {
         SharedPreferences.Editor editor = sp.edit();
 
         editor.putString(POSITION, _position.name());
+        editor.putInt(MAX_LIFT_TICKS, _maxLiftTicks);
 
         editor.commit();
     }
 
     public void load() {
         _position = Position.toPosition(sp.getString(POSITION, "BLUE_BRICKS"));
+        _maxLiftTicks = sp.getInt(MAX_LIFT_TICKS, 1000);
     }
 
+    public Position getPosition() {
+        return _position;
+    }
+
+    public void setPosition(Position position) {
+        this._position = position;
+    }
+
+    public int getMaxLiftTicks() {
+        return _maxLiftTicks;
+    }
+
+    public void setMaxLiftTicks(int maxLiftTicks) {
+        _maxLiftTicks = maxLiftTicks;
+    }
 }

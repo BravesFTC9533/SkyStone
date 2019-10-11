@@ -52,7 +52,7 @@ public class AutonomousOpMode extends BaseLinearOpMode {
     }
 
     private void blueBricks() {
-
+        robot.moveForwardByInches(10, 1);
     }
 
     private void redBricks() {

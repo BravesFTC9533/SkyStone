@@ -26,6 +26,7 @@ public class AutonomousConfig extends LinearOpMode {
         menu.clearOptions();
 
         menu.addOption("Position", Config.Position.class, config.getPosition());
+        menu.addOption("Max_Lift_Ticks", 10000, 0, 1, config.getMaxLiftTicks());
         menu.setGamepad(gamepad1);
         menu.setTelemetry(telemetry);
 
@@ -49,6 +50,8 @@ public class AutonomousConfig extends LinearOpMode {
                     config.setPosition(Config.Position.RED_BUILDINGS);
                     break;
             }
+
+            config.setMaxLiftTicks((int) Double.parseDouble(menu.getCurrentChoiceOf("Max Lift Ticks")));
 
             sleep(50);
         }

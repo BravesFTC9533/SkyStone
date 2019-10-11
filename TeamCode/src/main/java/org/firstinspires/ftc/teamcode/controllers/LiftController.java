@@ -16,6 +16,7 @@ public class LiftController extends BaseController {
     public LiftController(HardwareMap hardwareMap) {
         super(hardwareMap);
         lift = hardwareMap.dcMotor.get("lift");
+        lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     }
 
     public void stop() {
@@ -42,15 +43,19 @@ public class LiftController extends BaseController {
         switch(button) {
             case FtcGamePad.GAMEPAD_A:
                 if(pressed) {
+                    lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                     lift.setPower(-1);
                 } else{
+                    lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                     lift.setPower(0);
                 }
                 break;
             case FtcGamePad.GAMEPAD_Y:
                 if(pressed) {
+                    lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                     lift.setPower(1);
                 } else {
+                    lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                     lift.setPower(0);
                 }
                 break;
