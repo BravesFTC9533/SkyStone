@@ -25,16 +25,21 @@ public class Config {
     public static final String MAX_LIFT_TICKS = "MaxLiftTicks";
     public static int _maxLiftTicks;
 
+    public static final String MAX_SERVO_POSITION = "MaxServoPosition";
+    public static float _maxServoPosition;
+
     public Config(Context context) {
         sp = context.getSharedPreferences(PREFERENCES, Context.MODE_PRIVATE);
         load();
     }
+
 
     public void save() {
         SharedPreferences.Editor editor = sp.edit();
 
         editor.putString(POSITION, _position.name());
         editor.putInt(MAX_LIFT_TICKS, _maxLiftTicks);
+        editor.putFloat(MAX_SERVO_POSITION, _maxServoPosition);
 
         editor.commit();
     }
@@ -42,6 +47,7 @@ public class Config {
     public void load() {
         _position = Position.toPosition(sp.getString(POSITION, "BLUE_BRICKS"));
         _maxLiftTicks = sp.getInt(MAX_LIFT_TICKS, 1000);
+        _maxServoPosition = sp.getFloat(MAX_SERVO_POSITION, 0.5f);
     }
 
     public Position getPosition() {
@@ -58,5 +64,13 @@ public class Config {
 
     public void setMaxLiftTicks(int maxLiftTicks) {
         _maxLiftTicks = maxLiftTicks;
+    }
+
+    public void setMaxServoPosition(float maxServoPosition) {
+        _maxServoPosition = maxServoPosition;
+    }
+
+    public float getMaxServoPosition() {
+        return _maxServoPosition;
     }
 }

@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.common.BaseController;
+import org.firstinspires.ftc.teamcode.common.Config;
 import org.firstinspires.ftc.teamcode.common.FtcGamePad;
 
 public class LiftController extends BaseController {
@@ -21,8 +22,10 @@ public class LiftController extends BaseController {
     public Servo leftLiftServo;
     public Servo rightLiftServo;
 
-    public LiftController(HardwareMap hardwareMap, Telemetry telemetry) {
-        super(hardwareMap);
+    private boolean isClosed = true;
+
+    public LiftController(HardwareMap hardwareMap, Config config, Telemetry telemetry) {
+        super(hardwareMap, config);
         this.telemetry = telemetry;
         lift = hardwareMap.dcMotor.get("lift");
         lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -43,11 +46,9 @@ public class LiftController extends BaseController {
     }
 
     private void initServos() {
-        leftLiftServo.setDirection(Servo.Direction.REVERSE);
-
         leftServo.setPosition(0);
         rightServo.setPosition(0);
-        leftLiftServo.setPosition(0);
+        leftLiftServo.setPosition(1);
         rightLiftServo.setPosition(0);
     }
 
@@ -72,27 +73,46 @@ public class LiftController extends BaseController {
 
     @Override
     public void gamepadButtonEvent(FtcGamePad gamepad, int button, boolean pressed) {
-        telemetry.log().add("Lift: " + lift.getCurrentPosition());
-        telemetry.update();
         switch(button) {
-            case FtcGamePad.GAMEPAD_A:
+            case FtcGamePad.GAMEPAD_DPAD_DOWN:
                 if(pressed) {
-                    lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                    lift.setPower(-LIFT_SPEED);
+                    if(lift.getCurrentPosition() >= 0) {
+                        lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                        lift.setPower(-LIFT_SPEED);
+                    } else {
+                        lift.setPower(0);
+                    }
                 } else{
                     lift.setPower(0);
                     lift.setTargetPosition(lift.getCurrentPosition());
                     lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 }
                 break;
-            case FtcGamePad.GAMEPAD_Y:
+            case FtcGamePad.GAMEPAD_DPAD_UP:
                 if(pressed) {
-                    lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                    lift.setPower(LIFT_SPEED);
+                    if(lift.getCurrentPosition() <= 455) {
+                        lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                        lift.setPower(LIFT_SPEED);
+                    } else {
+                        lift.setPower(0);
+                    }
                 } else {
                     lift.setPower(0);
                     lift.setTargetPosition(lift.getCurrentPosition());
                     lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                }
+                break;
+            case FtcGamePad.GAMEPAD_X:
+                if(pressed) {
+                    if (isClosed) {
+                        leftLiftServo.setPosition(0.3);
+                        rightLiftServo.setPosition(0.5);
+                        isClosed = false;
+                    } else {
+                        leftLiftServo.setPosition(1);
+                        rightLiftServo.setPosition(0);
+                        isClosed = true;
+                    }
                 }
                 break;
         }
