@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
+import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackableDefaultListener;
 import org.firstinspires.ftc.teamcode.common.BaseLinearOpMode;
 
 @Autonomous(name = "Java: Autonomous", group = "Concept")
@@ -67,17 +68,24 @@ public class AutonomousOpMode extends BaseLinearOpMode {
         }
     }
 
+    protected boolean foundTraget = false;
+    protected double distance = 0;
+
     private void grabBrick() {
-        while(opModeIsActive()) {
+        while(opModeIsActive() && !foundTraget) {
             updateVuforia();
-            telemetry.addData("Block Distance", positionX + "mm");
-            telemetry.update();
+            if(targetVisible && ((VuforiaTrackableDefaultListener)stoneTarget.getListener()).isVisible() && opModeIsActive()) {
+                distance = Math.abs(positionX);
+                foundTraget = true;
+            }
         }
+        turnDegrees(TurnDirection.CLOCKWISE, 180, 0.5);
+        moveByInches(-distance, 0.7);
     }
 
     private void blueBricks() {
-        moveByInches(5, 0.5);
-        //grabBrick();
+        moveByInches(10, 0.6);
+        grabBrick();
     }
 
     private void redBricks() {

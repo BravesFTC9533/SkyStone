@@ -63,7 +63,7 @@ public class BaseLinearOpMode extends LinearOpMode {
 
     // Since ImageTarget trackables use mm to specifiy their dimensions, we must use mm for all the physical dimension.
     // We will define some constants and conversions here
-    private static final float mmPerInch        = 25.4f;
+    protected static final float mmPerInch        = 25.4f;
     private static final float mmTargetHeight   = (6) * mmPerInch;          // the height of the center of the target image above the floor
 
     // Constant for Stone Target
@@ -79,6 +79,8 @@ public class BaseLinearOpMode extends LinearOpMode {
     // Constants for perimeter targets
     protected static final float halfField = 72 * mmPerInch;
     protected static final float quadField  = 36 * mmPerInch;
+    // Overshooting correction
+    private static final double OVERSHOOT_ADJUSTMENT = 0.8;
 
     // Class Members
     protected OpenGLMatrix lastLocation = null;
@@ -92,17 +94,32 @@ public class BaseLinearOpMode extends LinearOpMode {
     protected float positionY;
     protected float positionZ;
 
+    // Setup Targets
+    protected VuforiaTrackable stoneTarget;
+    protected VuforiaTrackable blueRearBridge;
+    protected VuforiaTrackable redRearBridge;
+    protected VuforiaTrackable redFrontBridge;
+    protected VuforiaTrackable blueFrontBridge;
+    protected VuforiaTrackable red1;
+    protected VuforiaTrackable red2;
+    protected VuforiaTrackable front1;
+    protected VuforiaTrackable front2;
+    protected VuforiaTrackable blue1;
+    protected VuforiaTrackable blue2;
+    protected VuforiaTrackable rear1;
+    protected VuforiaTrackable rear2;
+
     // List of all the trackable targets in the SkyStone game
     protected List<VuforiaTrackable> allTrackables = new ArrayList<VuforiaTrackable>();
 
-    // Enum to control the direction of movement
-    public enum Direction {
-        FORWARD, BACKWARDS
-    }
-
     // Enum to control the direction of turning
     public enum TurnDirection {
-        CLOCKWISE, COUNTER_CLOCKWISE
+        /** Robot will turn in a CLOCKWISE direction
+         */
+        CLOCKWISE,
+        /** Robot wll turn in a Counter Clockwise Direction
+         */
+        COUNTER_CLOCKWISE
     }
 
     @Override public void runOpMode() {}
@@ -137,31 +154,31 @@ public class BaseLinearOpMode extends LinearOpMode {
         // sets are stored in the 'assets' part of our application.
         VuforiaTrackables targetsSkyStone = this.vuforia.loadTrackablesFromAsset("Skystone");
 
-        VuforiaTrackable stoneTarget = targetsSkyStone.get(0);
+        stoneTarget = targetsSkyStone.get(0);
         stoneTarget.setName("Stone Target");
-        VuforiaTrackable blueRearBridge = targetsSkyStone.get(1);
+        blueRearBridge = targetsSkyStone.get(1);
         blueRearBridge.setName("Blue Rear Bridge");
-        VuforiaTrackable redRearBridge = targetsSkyStone.get(2);
+        redRearBridge = targetsSkyStone.get(2);
         redRearBridge.setName("Red Rear Bridge");
-        VuforiaTrackable redFrontBridge = targetsSkyStone.get(3);
+        redFrontBridge = targetsSkyStone.get(3);
         redFrontBridge.setName("Red Front Bridge");
-        VuforiaTrackable blueFrontBridge = targetsSkyStone.get(4);
+        blueFrontBridge = targetsSkyStone.get(4);
         blueFrontBridge.setName("Blue Front Bridge");
-        VuforiaTrackable red1 = targetsSkyStone.get(5);
+        red1 = targetsSkyStone.get(5);
         red1.setName("Red Perimeter 1");
-        VuforiaTrackable red2 = targetsSkyStone.get(6);
+        red2 = targetsSkyStone.get(6);
         red2.setName("Red Perimeter 2");
-        VuforiaTrackable front1 = targetsSkyStone.get(7);
+        front1 = targetsSkyStone.get(7);
         front1.setName("Front Perimeter 1");
-        VuforiaTrackable front2 = targetsSkyStone.get(8);
+        front2 = targetsSkyStone.get(8);
         front2.setName("Front Perimeter 2");
-        VuforiaTrackable blue1 = targetsSkyStone.get(9);
+        blue1 = targetsSkyStone.get(9);
         blue1.setName("Blue Perimeter 1");
-        VuforiaTrackable blue2 = targetsSkyStone.get(10);
+        blue2 = targetsSkyStone.get(10);
         blue2.setName("Blue Perimeter 2");
-        VuforiaTrackable rear1 = targetsSkyStone.get(11);
+        rear1 = targetsSkyStone.get(11);
         rear1.setName("Rear Perimeter 1");
-        VuforiaTrackable rear2 = targetsSkyStone.get(12);
+        rear2 = targetsSkyStone.get(12);
         rear2.setName("Rear Perimeter 2");
 
         // For convenience, gather together all the trackable objects in one easily-iterable collection */
@@ -270,9 +287,9 @@ public class BaseLinearOpMode extends LinearOpMode {
 
         // Next, translate the camera lens to where it is on the robot.
         // In this example, it is centered (left to right), but forward of the middle of the robot, and above ground level.
-        final float CAMERA_FORWARD_DISPLACEMENT  = 4.0f * mmPerInch;   // eg: Camera is 4 Inches in front of robot center
-        final float CAMERA_VERTICAL_DISPLACEMENT = 8.0f * mmPerInch;   // eg: Camera is 8 Inches above ground
-        final float CAMERA_LEFT_DISPLACEMENT     = 0;     // eg: Camera is ON the robot's center line
+        final float CAMERA_FORWARD_DISPLACEMENT  = 4.50f * mmPerInch;   // eg: Camera is 4 Inches in front of robot center
+        final float CAMERA_VERTICAL_DISPLACEMENT = 11.5f * mmPerInch;   // eg: Camera is 8 Inches above ground
+        final float CAMERA_LEFT_DISPLACEMENT     = 5.60f * mmPerInch;     // eg: Camera is ON the robot's center line
 
         OpenGLMatrix robotFromCamera = OpenGLMatrix
                 .translation(CAMERA_FORWARD_DISPLACEMENT, CAMERA_LEFT_DISPLACEMENT, CAMERA_VERTICAL_DISPLACEMENT)
@@ -350,47 +367,39 @@ public class BaseLinearOpMode extends LinearOpMode {
         }
     }
 
+    public void setZeroPowerBehaviors(ArrayList<DcMotor> motors, DcMotor.ZeroPowerBehavior behavior) {
+        for(DcMotor motor : motors) {
+            motor.setZeroPowerBehavior(behavior);
+        }
+    }
+
     public void driveByEncoderTicks(int ticks, double power) {
         addTargetPositions(robot.allMotors, ticks);
         setMotorsPowers(robot.allMotors, power);
     }
 
     public void moveByInches(double inches, double power) {
-        power = -power;
+        inches = -inches;
+        inches *= OVERSHOOT_ADJUSTMENT;
         if(opModeIsActive()) {
-            robot.frontLeft.setTargetPosition  (robot.frontLeft.getCurrentPosition()  + (int) (inches * Robot.COUNTS_PER_INCH));
-            robot.frontRight.setTargetPosition (robot.frontRight.getCurrentPosition() + (int) (inches * Robot.COUNTS_PER_INCH));
-            robot.backLeft.setTargetPosition   (robot.backLeft.getCurrentPosition()   + (int) (inches * Robot.COUNTS_PER_INCH));
-            robot.backRight.setTargetPosition  (robot.backRight.getCurrentPosition()  + (int) (inches * Robot.COUNTS_PER_INCH));
 
-            robot.frontLeft.setMode  (DcMotor.RunMode.RUN_TO_POSITION);
-            robot.frontRight.setMode (DcMotor.RunMode.RUN_TO_POSITION);
-            robot.backLeft.setMode   (DcMotor.RunMode.RUN_TO_POSITION);
-            robot.backRight.setMode  (DcMotor.RunMode.RUN_TO_POSITION);
+            addTargetPositions(robot.allMotors, (int) (inches * Robot.COUNTS_PER_INCH));
+            robot.setMotorMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-            robot.frontLeft.setPower  (power);
-            robot.frontRight.setPower (power);
-            robot.backLeft.setPower   (power);
-            robot.backRight.setPower  (power);
+            setMotorsPowers(robot.allMotors, power);
 
-            while(opModeIsActive() && (robot.frontLeft.isBusy() || robot.frontRight.isBusy() || robot.backRight.isBusy() || robot.backLeft.isBusy())) {
+            while (opModeIsActive() && robot.isBusy()) {
                 idle();
             }
 
-            robot.frontLeft.setPower  (0);
-            robot.frontRight.setPower (0);
-            robot.backLeft.setPower   (0);
-            robot.backRight.setPower  (0);
-
-            robot.frontLeft.setMode  (DcMotor.RunMode.RUN_USING_ENCODER);
-            robot.frontRight.setMode (DcMotor.RunMode.RUN_USING_ENCODER);
-            robot.backLeft.setMode   (DcMotor.RunMode.RUN_USING_ENCODER);
-            robot.backRight.setMode  (DcMotor.RunMode.RUN_USING_ENCODER);
+            robot.stop();
+            robot.setMotorMode(DcMotor.RunMode.RUN_USING_ENCODER);
         }
     }
 
     public void moveByInches(double inches, double power, double timeoutSeconds) {
-        power = -power;
+        inches = -inches;
+        inches *= OVERSHOOT_ADJUSTMENT;
         if(opModeIsActive()) {
             addTargetPositions(robot.allMotors, (int) (inches * Robot.COUNTS_PER_INCH));
 
@@ -405,6 +414,36 @@ public class BaseLinearOpMode extends LinearOpMode {
             robot.stop();
             robot.setMotorMode(DcMotor.RunMode.RUN_USING_ENCODER);
         }
+    }
+
+    public void moveByMillimeters(int millimeters, double power) {
+        moveByInches(millimeters / mmPerInch, power);
+    }
+
+    public void turnDegrees(TurnDirection direction, int degrees, double power) {
+        double inchesPerDegree = Robot.WHEEL_DISTANCE_INCHES / 90; // Find how many inches are in a degree
+        degrees *= inchesPerDegree;
+
+        if(direction == TurnDirection.COUNTER_CLOCKWISE) {
+            degrees = -degrees;
+        }
+
+        encoderLRDrive(power, degrees, -degrees);
+    }
+
+    public void encoderLRDrive(double targetSpeed, double leftInches, double rightInches) {
+        addTargetPositions(robot.leftMotors, (int) (leftInches * Robot.COUNTS_PER_INCH));
+        addTargetPositions(robot.rightMotors, (int) (rightInches * Robot.COUNTS_PER_INCH));
+
+        robot.setMotorMode(DcMotor.RunMode.RUN_TO_POSITION);
+        setMotorsPowers(robot.allMotors, targetSpeed);
+
+        while(opModeIsActive() && robot.isBusy()) {
+            idle();
+        }
+
+        robot.stop();
+        robot.setMotorMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
 }
