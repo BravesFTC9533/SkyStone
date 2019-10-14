@@ -23,6 +23,7 @@ public class LiftController extends BaseController {
     public Servo rightLiftServo;
 
     private boolean isClosed = true;
+    private boolean isDragging = false;
 
     public LiftController(HardwareMap hardwareMap, Config config, Telemetry telemetry) {
         super(hardwareMap, config);
@@ -115,6 +116,17 @@ public class LiftController extends BaseController {
                     }
                 }
                 break;
+            case FtcGamePad.GAMEPAD_B:
+                if(pressed) {
+                    if(isDragging) {
+                        leftServo.setPosition(0);
+                        rightServo.setPosition(0);
+                    } else {
+                        leftServo.setPosition(1);
+                        rightServo.setPosition(-1);
+                    }
+                    isDragging = !isDragging;
+                }
         }
     }
 }

@@ -14,7 +14,6 @@ import org.firstinspires.ftc.teamcode.common.BaseLinearOpMode;
 public class AutonomousOpMode extends BaseLinearOpMode {
 
     private ElapsedTime runtime = new ElapsedTime();
-    private Robot robot;
 
     private StartingPosition startingPosition = StartingPosition.BLUE_BRICKS;
 
@@ -27,10 +26,27 @@ public class AutonomousOpMode extends BaseLinearOpMode {
 
     @Override
     public void runOpMode() {
-        telemetry.addData("Status", "Initialized");
+        telemetry.addData("Status", "Initializing Robot. Hands Clear!");
         telemetry.update();
 
-        robot = new Robot(hardwareMap, telemetry);
+        Initialize(hardwareMap);
+
+        telemetry.addData("Status", "Robot Initialized");
+        telemetry.update();
+
+        telemetry.addData("Status", "Initializing Vuforia");
+        telemetry.update();
+
+        try {
+            initializeVuforia();
+        } catch (Exception e) {
+            telemetry.addData("Status", "Vuforia Could not be Initialized!");
+            telemetry.update();
+            return;
+        }
+
+        telemetry.addData("Status", "Vuforia Initialized");
+        telemetry.update();
 
         waitForStart();
         runtime.reset();
@@ -51,8 +67,17 @@ public class AutonomousOpMode extends BaseLinearOpMode {
         }
     }
 
+    private void grabBrick() {
+        while(opModeIsActive()) {
+            updateVuforia();
+            telemetry.addData("Block Distance", positionX + "mm");
+            telemetry.update();
+        }
+    }
+
     private void blueBricks() {
-        robot.moveForwardByInches(10, 1);
+        moveByInches(5, 0.5);
+        //grabBrick();
     }
 
     private void redBricks() {

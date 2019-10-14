@@ -1,6 +1,9 @@
 package org.firstinspires.ftc.teamcode.common;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
 import org.firstinspires.ftc.robotcore.external.matrices.OpenGLMatrix;
@@ -10,6 +13,9 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackable;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackableDefaultListener;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
+import org.firstinspires.ftc.teamcode.Robot;
+import org.firstinspires.ftc.teamcode.drive.IDrive;
+import org.firstinspires.ftc.teamcode.drive.MecanumDrive;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,6 +28,12 @@ import static org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocaliz
 
 public class BaseLinearOpMode extends LinearOpMode {
 
+    // Add access to the robot class
+    protected Robot robot;
+
+    // Setup Drive System
+    protected IDrive drive;
+
     // IMPORTANT:  For Phone Camera, set 1) the camera source and 2) the orientation, based on how your phone is mounted:
     // 1) Camera Source.  Valid choices are:  BACK (behind screen) or FRONT (selfie side)
     // 2) Phone Orientation. Choices are: PHONE_IS_PORTRAIT = true (portrait) or PHONE_IS_PORTRAIT = false (landscape)
@@ -29,7 +41,7 @@ public class BaseLinearOpMode extends LinearOpMode {
     // NOTE: If you are running on a CONTROL HUB, with only one USB WebCam, you must select CAMERA_CHOICE = BACK; and PHONE_IS_PORTRAIT = false;
     //
     private static final VuforiaLocalizer.CameraDirection CAMERA_CHOICE = BACK;
-    private static final boolean PHONE_IS_PORTRAIT = false  ;
+    private static final boolean PHONE_IS_PORTRAIT = true  ;
 
     /*
      * IMPORTANT: You need to obtain your own license key to use Vuforia. The string below with which
@@ -43,8 +55,11 @@ public class BaseLinearOpMode extends LinearOpMode {
      * Once you've obtained a license key, copy the string from the Vuforia web site
      * and paste it in to your code on the next line, between the double quotes.
      */
-    private static final String VUFORIA_KEY =
-            " -- YOUR NEW VUFORIA KEY GOES HERE  --- ";
+    protected static final String VUFORIA_KEY = "AeWceoD/////AAAAGWvk7AQGLUiTsyU4mSW7gfldjSCDQHX76lt9iPO5D8zaboG428r" +
+            "dS9WN0+AFpAlc/g4McLRAQIb5+ijFCPJJkLc+ynXYdhljdI2k9R4KL8t3MYk/tbmQ75st9VI7//2vNkp0JHV6oy4HXltxVFcEbtBYeT" +
+            "BJ9CFbMW+0cMNhLBPwHV7RYeNPZRgxf27J0oO8VoHOlj70OYdNYos5wvDM+ZbfWrOad/cpo4qbAw5iB95T5I9D2/KRf1HQHygtDl8/O" +
+            "tDFlOfqK6v2PTvnEbNnW1aW3vPglGXknX+rm0k8b0S7GFJkgl7SLq/HFNl0VEIVJGVQe9wt9PB6bJuxOMMxN4asy4rW5PRRBqasSM7O" +
+            "Ll4W";
 
     // Since ImageTarget trackables use mm to specifiy their dimensions, we must use mm for all the physical dimension.
     // We will define some constants and conversions here
@@ -77,7 +92,31 @@ public class BaseLinearOpMode extends LinearOpMode {
     protected float positionY;
     protected float positionZ;
 
-    @Override public void runOpMode() {
+    // List of all the trackable targets in the SkyStone game
+    protected List<VuforiaTrackable> allTrackables = new ArrayList<VuforiaTrackable>();
+
+    // Enum to control the direction of movement
+    public enum Direction {
+        FORWARD, BACKWARDS
+    }
+
+    // Enum to control the direction of turning
+    public enum TurnDirection {
+        CLOCKWISE, COUNTER_CLOCKWISE
+    }
+
+    @Override public void runOpMode() {}
+
+    protected void Initialize(HardwareMap hardwareMap) {
+        this.robot = new Robot(hardwareMap);
+    }
+
+    protected void Initialize(HardwareMap hardwareMap, FtcGamePad driverGamePad) {
+        this.robot = new Robot(hardwareMap);
+        drive = new MecanumDrive(robot.frontLeft, robot.frontRight, robot.backLeft, robot.backRight, driverGamePad);
+    }
+
+    protected void initializeVuforia() {
         /*
          * Configure Vuforia by creating a Parameter object, and passing it to the Vuforia engine.
          * We can pass Vuforia the handle to a camera preview resource (on the RC phone);
@@ -126,7 +165,6 @@ public class BaseLinearOpMode extends LinearOpMode {
         rear2.setName("Rear Perimeter 2");
 
         // For convenience, gather together all the trackable objects in one easily-iterable collection */
-        List<VuforiaTrackable> allTrackables = new ArrayList<VuforiaTrackable>();
         allTrackables.addAll(targetsSkyStone);
 
         /**
@@ -258,46 +296,115 @@ public class BaseLinearOpMode extends LinearOpMode {
         // Tap the preview window to receive a fresh image.
 
         targetsSkyStone.activate();
-        while (!isStopRequested()) {
-
-            // check all the trackable targets to see which one (if any) is visible.
-            targetVisible = false;
-            for (VuforiaTrackable trackable : allTrackables) {
-                if (((VuforiaTrackableDefaultListener)trackable.getListener()).isVisible()) {
-                    telemetry.addData("Visible Target", trackable.getName());
-                    targetVisible = true;
-
-                    // getUpdatedRobotLocation() will return null if no new information is available since
-                    // the last time that call was made, or if the trackable is not currently visible.
-                    OpenGLMatrix robotLocationTransform = ((VuforiaTrackableDefaultListener)trackable.getListener()).getUpdatedRobotLocation();
-                    if (robotLocationTransform != null) {
-                        lastLocation = robotLocationTransform;
-                    }
-                    break;
-                }
-            }
-
-            // Provide feedback as to where the robot is located (if we know).
-            if (targetVisible) {
-                // express position (translation) of robot in inches.
-                VectorF translation = lastLocation.getTranslation();
-                telemetry.addData("Pos (in)", "{X, Y, Z} = %.1f, %.1f, %.1f",
-                        translation.get(0) / mmPerInch, translation.get(1) / mmPerInch, translation.get(2) / mmPerInch);
-                positionX = translation.get(0) / mmPerInch;
-                positionY = translation.get(1) / mmPerInch;
-                positionZ = translation.get(2) / mmPerInch;
-
-                // express the rotation of the robot in degrees.
-                Orientation rotation = Orientation.getOrientation(lastLocation, EXTRINSIC, XYZ, DEGREES);
-                telemetry.addData("Rot (deg)", "{Roll, Pitch, Heading} = %.0f, %.0f, %.0f", rotation.firstAngle, rotation.secondAngle, rotation.thirdAngle);
-            }
-            else {
-                telemetry.addData("Visible Target", "none");
-            }
-            telemetry.update();
-        }
 
         // Disable Tracking when we are done;
-        targetsSkyStone.deactivate();
     }
+
+    protected void updateVuforia() {
+        // check all the trackable targets to see which one (if any) is visible.
+        targetVisible = false;
+        for (VuforiaTrackable trackable : allTrackables) {
+            if (((VuforiaTrackableDefaultListener)trackable.getListener()).isVisible()) {
+                //telemetry.addData("Visible Target", trackable.getName());
+                targetVisible = true;
+
+                // getUpdatedRobotLocation() will return null if no new information is available since
+                // the last time that call was made, or if the trackable is not currently visible.
+                OpenGLMatrix robotLocationTransform = ((VuforiaTrackableDefaultListener)trackable.getListener()).getUpdatedRobotLocation();
+                if (robotLocationTransform != null) {
+                    lastLocation = robotLocationTransform;
+                }
+                break;
+            }
+        }
+
+        // Provide feedback as to where the robot is located (if we know).
+        if (targetVisible) {
+            // express position (translation) of robot in inches.
+            VectorF translation = lastLocation.getTranslation();
+            //telemetry.addData("Pos (in)", "{X, Y, Z} = %.1f, %.1f, %.1f",
+            //translation.get(0) / mmPerInch, translation.get(1) / mmPerInch, translation.get(2) / mmPerInch);
+            positionX = translation.get(0) / mmPerInch;
+            positionY = translation.get(1) / mmPerInch;
+            positionZ = translation.get(2) / mmPerInch;
+
+            // express the rotation of the robot in degrees.
+            Orientation rotation = Orientation.getOrientation(lastLocation, EXTRINSIC, XYZ, DEGREES);
+            //telemetry.addData("Rot (deg)", "{Roll, Pitch, Heading} = %.0f, %.0f, %.0f", rotation.firstAngle, rotation.secondAngle, rotation.thirdAngle);
+        }
+        else {
+            //telemetry.addData("Visible Target", "none");
+        }
+        //telemetry.update();
+    }
+
+    public void addTargetPositions(ArrayList<DcMotor> motors, int ticks) {
+        for(DcMotor motor : motors) {
+            motor.setTargetPosition(motor.getCurrentPosition() + ticks);
+        }
+    }
+
+    public void setMotorsPowers(ArrayList<DcMotor> motors, double power) {
+        for(DcMotor motor : motors) {
+            motor.setPower(power);
+        }
+    }
+
+    public void driveByEncoderTicks(int ticks, double power) {
+        addTargetPositions(robot.allMotors, ticks);
+        setMotorsPowers(robot.allMotors, power);
+    }
+
+    public void moveByInches(double inches, double power) {
+        power = -power;
+        if(opModeIsActive()) {
+            robot.frontLeft.setTargetPosition  (robot.frontLeft.getCurrentPosition()  + (int) (inches * Robot.COUNTS_PER_INCH));
+            robot.frontRight.setTargetPosition (robot.frontRight.getCurrentPosition() + (int) (inches * Robot.COUNTS_PER_INCH));
+            robot.backLeft.setTargetPosition   (robot.backLeft.getCurrentPosition()   + (int) (inches * Robot.COUNTS_PER_INCH));
+            robot.backRight.setTargetPosition  (robot.backRight.getCurrentPosition()  + (int) (inches * Robot.COUNTS_PER_INCH));
+
+            robot.frontLeft.setMode  (DcMotor.RunMode.RUN_TO_POSITION);
+            robot.frontRight.setMode (DcMotor.RunMode.RUN_TO_POSITION);
+            robot.backLeft.setMode   (DcMotor.RunMode.RUN_TO_POSITION);
+            robot.backRight.setMode  (DcMotor.RunMode.RUN_TO_POSITION);
+
+            robot.frontLeft.setPower  (power);
+            robot.frontRight.setPower (power);
+            robot.backLeft.setPower   (power);
+            robot.backRight.setPower  (power);
+
+            while(opModeIsActive() && (robot.frontLeft.isBusy() || robot.frontRight.isBusy() || robot.backRight.isBusy() || robot.backLeft.isBusy())) {
+                idle();
+            }
+
+            robot.frontLeft.setPower  (0);
+            robot.frontRight.setPower (0);
+            robot.backLeft.setPower   (0);
+            robot.backRight.setPower  (0);
+
+            robot.frontLeft.setMode  (DcMotor.RunMode.RUN_USING_ENCODER);
+            robot.frontRight.setMode (DcMotor.RunMode.RUN_USING_ENCODER);
+            robot.backLeft.setMode   (DcMotor.RunMode.RUN_USING_ENCODER);
+            robot.backRight.setMode  (DcMotor.RunMode.RUN_USING_ENCODER);
+        }
+    }
+
+    public void moveByInches(double inches, double power, double timeoutSeconds) {
+        power = -power;
+        if(opModeIsActive()) {
+            addTargetPositions(robot.allMotors, (int) (inches * Robot.COUNTS_PER_INCH));
+
+            robot.setMotorMode(DcMotor.RunMode.RUN_TO_POSITION);
+            setMotorsPowers(robot.allMotors, power);
+
+            ElapsedTime timer = new ElapsedTime();
+            while(opModeIsActive() && robot.isBusy() && timer.seconds() < timeoutSeconds) {
+                idle();
+            }
+
+            robot.stop();
+            robot.setMotorMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        }
+    }
+
 }
