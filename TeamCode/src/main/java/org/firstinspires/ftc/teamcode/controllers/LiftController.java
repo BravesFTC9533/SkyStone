@@ -32,21 +32,17 @@ public class LiftController extends BaseController {
         lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-        int startEnc = lift.getCurrentPosition();
-
-        lift.setTargetPosition(200);
-        lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        lift.setPower(LIFT_SPEED);
-
         leftServo      = hardwareMap.servo.get("flservo");
         rightServo     = hardwareMap.servo.get("frservo");
         leftLiftServo  = hardwareMap.servo.get("llservo");
         rightLiftServo = hardwareMap.servo.get("lrservo");
-
-        initServos();
     }
 
-    private void initServos() {
+    public void initLift() {
+        lift.setTargetPosition(200);
+        lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        lift.setPower(LIFT_SPEED);
+
         leftServo.setPosition(0);
         rightServo.setPosition(0);
         leftLiftServo.setPosition(1);

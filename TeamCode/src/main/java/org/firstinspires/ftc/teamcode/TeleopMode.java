@@ -36,6 +36,8 @@ public class TeleopMode extends BaseLinearOpMode implements FtcGamePad.ButtonHan
         waitForStart();
         runtime.reset();
 
+        liftController.initLift();
+
         while (opModeIsActive()) {
             drive.handle();
             driverGamePad.update();
