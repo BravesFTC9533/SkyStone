@@ -42,13 +42,13 @@ public class AutonomousConfig extends LinearOpMode {
                     config.setPosition(Config.Position.BLUE_BRICKS);
                     break;
                 case "BLUE_BUILDINGS":
-                    config.setPosition(Config.Position.BLUE_BUILDINGS);
+                    config.setPosition(Config.Position.BLUE_BUILDING);
                     break;
                 case "RED_BRICKS":
                     config.setPosition(Config.Position.RED_BRICKS);
                     break;
                 case "RED_BUILDINGS":
-                    config.setPosition(Config.Position.RED_BUILDINGS);
+                    config.setPosition(Config.Position.RED_BUILDING);
                     break;
             }
 

@@ -1,29 +1,22 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
-import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackableDefaultListener;
 import org.firstinspires.ftc.teamcode.common.BaseLinearOpMode;
+import org.firstinspires.ftc.teamcode.common.Config;
+import org.firstinspires.ftc.teamcode.controllers.LiftController;
 
 @Autonomous(name = "Java: Autonomous", group = "Concept")
 public class AutonomousOpMode extends BaseLinearOpMode {
 
     private ElapsedTime runtime = new ElapsedTime();
 
-    private StartingPosition startingPosition = StartingPosition.BLUE_BRICKS;
+    private LiftController liftController;
+    private Config config;
 
-    public enum StartingPosition {
-        BLUE_BUILDING,
-        BLUE_BRICKS,
-        RED_BUILDING,
-        RED_BRICKS
-    }
+    private Config.Position startingPosition = Config.Position.BLUE_BRICKS;
 
     @Override
     public void runOpMode() {
@@ -31,6 +24,9 @@ public class AutonomousOpMode extends BaseLinearOpMode {
         telemetry.update();
 
         Initialize(hardwareMap);
+
+        config = new Config(hardwareMap.appContext);
+        liftController = new LiftController(hardwareMap, config, telemetry);
 
         telemetry.addData("Status", "Robot Initialized");
         telemetry.update();
@@ -52,6 +48,8 @@ public class AutonomousOpMode extends BaseLinearOpMode {
         waitForStart();
         runtime.reset();
 
+        liftController.initLift();
+
         switch(startingPosition) {
             case BLUE_BRICKS:
                 blueBricks();
@@ -68,23 +66,22 @@ public class AutonomousOpMode extends BaseLinearOpMode {
         }
     }
 
-    protected boolean foundTraget = false;
-    protected double distance = 0;
-
     private void grabBrick() {
-        while(opModeIsActive() && !foundTraget) {
+        boolean foundTarget = false;
+        double distance = 0;
+        while(opModeIsActive() && !foundTarget) {
             updateVuforia();
             if(targetVisible && ((VuforiaTrackableDefaultListener)stoneTarget.getListener()).isVisible() && opModeIsActive()) {
                 distance = Math.abs(positionX);
-                foundTraget = true;
+                foundTarget = true;
             }
         }
         turnDegrees(TurnDirection.CLOCKWISE, 180, 0.5);
-        moveByInches(-distance, 0.7);
+        moveByInches(0.7, -distance);
     }
 
     private void blueBricks() {
-        moveByInches(10, 0.6);
+        moveByInches(0.6, 10);
         grabBrick();
     }
 
@@ -99,7 +96,4 @@ public class AutonomousOpMode extends BaseLinearOpMode {
     private void redBuilding() {
 
     }
-
-
-
 }

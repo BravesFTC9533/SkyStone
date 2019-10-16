@@ -11,7 +11,7 @@ public class Config {
     public static final String POSITION = "Position";
     public static Position _position;
     public enum Position {
-        BLUE_BRICKS, BLUE_BUILDINGS, RED_BRICKS, RED_BUILDINGS;
+        BLUE_BRICKS, BLUE_BUILDING, RED_BRICKS, RED_BUILDING;
 
         public static Position toPosition(String position) {
             try {

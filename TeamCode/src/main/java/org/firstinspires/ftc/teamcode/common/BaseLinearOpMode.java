@@ -378,42 +378,13 @@ public class BaseLinearOpMode extends LinearOpMode {
         setMotorsPowers(robot.allMotors, power);
     }
 
-    public void moveByInches(double inches, double power) {
-        inches = -inches;
-        inches *= OVERSHOOT_ADJUSTMENT;
-        if(opModeIsActive()) {
-
-            addTargetPositions(robot.allMotors, (int) (inches * Robot.COUNTS_PER_INCH));
-            robot.setMotorMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-            setMotorsPowers(robot.allMotors, power);
-
-            while (opModeIsActive() && robot.isBusy()) {
-                idle();
-            }
-
-            robot.stop();
-            robot.setMotorMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        }
+    public void moveByInches(double power, double inches) {
+        moveByInches(power, inches, inches);
     }
 
-    public void moveByInches(double inches, double power, double timeoutSeconds) {
-        inches = -inches;
-        inches *= OVERSHOOT_ADJUSTMENT;
-        if(opModeIsActive()) {
-            addTargetPositions(robot.allMotors, (int) (inches * Robot.COUNTS_PER_INCH));
-
-            robot.setMotorMode(DcMotor.RunMode.RUN_TO_POSITION);
-            setMotorsPowers(robot.allMotors, power);
-
-            ElapsedTime timer = new ElapsedTime();
-            while(opModeIsActive() && robot.isBusy() && timer.seconds() < timeoutSeconds) {
-                idle();
-            }
-
-            robot.stop();
-            robot.setMotorMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        }
+    public void moveByInches(double power, double leftInches, double rightInches) {
+        encoderDrive(power, (int) Robot.COUNTS_PER_INCH * leftInches,
+                (int) Robot.COUNTS_PER_INCH * rightInches);
     }
 
     public void moveByMillimeters(int millimeters, double power) {
@@ -428,12 +399,12 @@ public class BaseLinearOpMode extends LinearOpMode {
             degrees = -degrees;
         }
 
-        encoderLRDrive(power, degrees, -degrees);
+        moveByInches(power, degrees, -degrees);
     }
 
-    public void encoderLRDrive(double targetSpeed, double leftInches, double rightInches) {
-        addTargetPositions(robot.leftMotors, (int) (leftInches * Robot.COUNTS_PER_INCH));
-        addTargetPositions(robot.rightMotors, (int) (rightInches * Robot.COUNTS_PER_INCH));
+    public void encoderDrive(double targetSpeed, double leftTicks, double rightTicks) {
+        addTargetPositions(robot.leftMotors, (int) leftTicks);
+        addTargetPositions(robot.rightMotors, (int) rightTicks);
 
         robot.setMotorMode(DcMotor.RunMode.RUN_TO_POSITION);
         setMotorsPowers(robot.allMotors, targetSpeed);
