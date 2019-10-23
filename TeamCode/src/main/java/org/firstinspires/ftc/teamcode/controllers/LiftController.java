@@ -43,8 +43,8 @@ public class LiftController extends BaseController {
         lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         lift.setPower(LIFT_SPEED);
 
-        leftServo.setPosition(0);
-        rightServo.setPosition(0);
+        leftServo.setPosition(1);
+        rightServo.setPosition(1);
         leftLiftServo.setPosition(1);
         rightLiftServo.setPosition(0);
     }

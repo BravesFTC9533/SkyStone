@@ -403,8 +403,8 @@ public class BaseLinearOpMode extends LinearOpMode {
     }
 
     public void encoderDrive(double targetSpeed, double leftTicks, double rightTicks) {
-        addTargetPositions(robot.leftMotors, (int) leftTicks);
-        addTargetPositions(robot.rightMotors, (int) rightTicks);
+        addTargetPositions(robot.leftMotors, (int) -leftTicks);
+        addTargetPositions(robot.rightMotors, (int) -rightTicks);
 
         robot.setMotorMode(DcMotor.RunMode.RUN_TO_POSITION);
         setMotorsPowers(robot.allMotors, targetSpeed);

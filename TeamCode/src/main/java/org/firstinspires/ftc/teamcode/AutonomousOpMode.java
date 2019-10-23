@@ -71,13 +71,12 @@ public class AutonomousOpMode extends BaseLinearOpMode {
         double distance = 0;
         while(opModeIsActive() && !foundTarget) {
             updateVuforia();
-            if(targetVisible && ((VuforiaTrackableDefaultListener)stoneTarget.getListener()).isVisible() && opModeIsActive()) {
+            if (targetVisible && ((VuforiaTrackableDefaultListener) stoneTarget.getListener()).isVisible() && opModeIsActive()) {
                 distance = Math.abs(positionX);
                 foundTarget = true;
             }
         }
-        turnDegrees(TurnDirection.CLOCKWISE, 180, 0.5);
-        moveByInches(0.7, -distance);
+        moveByInches(0.5, distance);
     }
 
     private void blueBricks() {
