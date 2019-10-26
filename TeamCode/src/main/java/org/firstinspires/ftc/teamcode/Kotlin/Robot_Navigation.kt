@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.Kotlin
 
+import com.qualcomm.robotcore.hardware.HardwareMap
 import org.firstinspires.ftc.robotcore.external.ClassFactory
 import org.firstinspires.ftc.robotcore.external.matrices.OpenGLMatrix
 import org.firstinspires.ftc.robotcore.external.navigation.*
@@ -60,11 +61,12 @@ class Robot_Navigation {
     lateinit var robot: FourWheelRobot
     lateinit var drive: IDrive2
 
-    fun initVuforia(drive: IDrive2) {
+    fun initVuforia(drive: IDrive2, hardwareMap: HardwareMap) {
         this.drive = drive
 
 
-        var parameters = VuforiaLocalizer.Parameters()
+        val cameraMonitorViewId = hardwareMap.appContext.resources.getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.packageName)
+        var parameters = VuforiaLocalizer.Parameters(cameraMonitorViewId)
         parameters.vuforiaLicenseKey = "AeWceoD/////AAAAGWvk7AQGLUiTsyU4mSW7gfldjSCDQHX76lt9iPO5D8zaboG428r" +
                 "dS9WN0+AFpAlc/g4McLRAQIb5+ijFCPJJkLc+ynXYdhljdI2k9R4KL8t3MYk/tbmQ75st9VI7//2vNkp0JHV6oy4HXltxVFcEbtBYeT" +
                 "BJ9CFbMW+0cMNhLBPwHV7RYeNPZRgxf27J0oO8VoHOlj70OYdNYos5wvDM+ZbfWrOad/cpo4qbAw5iB95T5I9D2/KRf1HQHygtDl8/O" +

@@ -11,5 +11,11 @@ interface IDrive2 {
     fun moveRobot() : Unit
     fun moveRobot(axial: Double, lateral: Double, yaw: Double)
 
+    fun isBusy() : Boolean
+    fun moveByInches(power: Double, inches: Double)
+    fun moveByInches(power: Double, leftInches: Double, rightInches: Double)
+
+    fun turnDegrees(direction: MecDrive2.TurnDirection, degrees: Int, power: Double)
+    fun stop() : Unit
     fun initDrive() : Unit
 }
