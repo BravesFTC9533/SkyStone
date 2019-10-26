@@ -17,8 +17,7 @@ public class LiftController extends BaseController {
     public DcMotor lift;
     private Telemetry telemetry;
 
-    public Servo leftServo;
-    public Servo rightServo;
+    public Servo dragServo;
     public Servo leftLiftServo;
     public Servo rightLiftServo;
 
@@ -32,8 +31,7 @@ public class LiftController extends BaseController {
         lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-        leftServo      = hardwareMap.servo.get("flservo");
-        rightServo     = hardwareMap.servo.get("frservo");
+        dragServo      = hardwareMap.servo.get("dragservo");
         leftLiftServo  = hardwareMap.servo.get("llservo");
         rightLiftServo = hardwareMap.servo.get("lrservo");
     }
@@ -43,8 +41,7 @@ public class LiftController extends BaseController {
         lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         lift.setPower(LIFT_SPEED);
 
-        leftServo.setPosition(1);
-        rightServo.setPosition(1);
+        dragServo.setPosition(1);
         leftLiftServo.setPosition(1);
         rightLiftServo.setPosition(0);
     }
@@ -115,11 +112,9 @@ public class LiftController extends BaseController {
             case FtcGamePad.GAMEPAD_B:
                 if(pressed) {
                     if(isDragging) {
-                        leftServo.setPosition(0);
-                        rightServo.setPosition(0);
+                        dragServo.setPosition(0);
                     } else {
-                        leftServo.setPosition(1);
-                        rightServo.setPosition(-1);
+                        dragServo.setPosition(1);
                     }
                     isDragging = !isDragging;
                 }

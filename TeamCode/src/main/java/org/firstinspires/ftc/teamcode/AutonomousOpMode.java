@@ -69,10 +69,13 @@ public class AutonomousOpMode extends BaseLinearOpMode {
     private void grabBrick() {
         boolean foundTarget = false;
         double distance = 0;
+        double turnDegrees = 0;
+        double z = 0;
         while(opModeIsActive() && !foundTarget) {
             updateVuforia();
             if (targetVisible && ((VuforiaTrackableDefaultListener) stoneTarget.getListener()).isVisible() && opModeIsActive()) {
                 distance = Math.abs(positionX);
+                z = positionZ;
                 foundTarget = true;
             }
         }

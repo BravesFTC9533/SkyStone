@@ -64,6 +64,13 @@ public class Robot {
         backRight.setMode(mode);
     }
 
+    private void setZeroPowerBehavior(DcMotor.ZeroPowerBehavior behavior) {
+        frontLeft.setZeroPowerBehavior(behavior);
+        frontRight.setZeroPowerBehavior(behavior);
+        backLeft.setZeroPowerBehavior(behavior);
+        backRight.setZeroPowerBehavior(behavior);
+    }
+
     public boolean isBusy() {
         if(frontLeft.isBusy() || frontRight.isBusy() || backRight.isBusy() || backLeft.isBusy()) {
             return true;
@@ -76,6 +83,15 @@ public class Robot {
         frontLeft.setPower(0);
         backLeft.setPower(0);
         backRight.setPower(0);
+    }
+
+    public void emergencyStop() {
+        setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        stop();
+    }
+
+    public void resetFromEmergencyStop() {
+        setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
     }
 
 }
