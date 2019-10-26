@@ -4,7 +4,6 @@ import org.firstinspires.ftc.robotcore.external.ClassFactory
 import org.firstinspires.ftc.robotcore.external.matrices.OpenGLMatrix
 import org.firstinspires.ftc.robotcore.external.navigation.*
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackableDefaultListener
-import android.R.attr.targetId
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackable
 import org.firstinspires.ftc.teamcode.Kotlin.Drives.IDrive2
 import kotlin.math.absoluteValue
@@ -278,22 +277,25 @@ class Robot_Navigation {
         targets?.deactivate()
     }
 
+
+
+
     fun cruseControl(standOffdistance: Double):  Boolean {
         var closeEnough = false
 
         // Priority #1 Rotate to always be pointing at the target (for best target retention).
-        val Y = relativeBearing * yaw_gain
+        val y = relativeBearing * yaw_gain
 
         // Priority #2  Drive laterally based on distance from X axis (same as y value)
-        val L = robotY * lateral_gain
+        val l = robotY * lateral_gain
 
         // Priority #3 Drive forward based on the desiredHeading target standoff distance
-        val A = -(robotX + standOffdistance) * axial_gain
+        val a = -(robotX + standOffdistance) * axial_gain
 
         // Send the desired axis motions to the robot hardware.
-        drive.setYaw(Y)
-        drive.setAxial(A)
-        drive.setLateral(L)
+        drive.setYaw(y)
+        drive.setAxial(a)
+        drive.setLateral(l)
 
         // Determine if we are close enough to the target for action.
         closeEnough = (robotX + standOffdistance).absoluteValue < close_enough && (robotY.absoluteValue) < on_axis
@@ -301,4 +303,7 @@ class Robot_Navigation {
 
         return closeEnough
     }
+
+
+
 }

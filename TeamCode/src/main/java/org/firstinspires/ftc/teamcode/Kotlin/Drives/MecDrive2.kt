@@ -14,10 +14,10 @@ class MecDrive2 : IDrive2 {
     var lateral: Double? = null
 
     var robot: FourWheelRobot
-    var gamePad: GamePad
+    var gamePad: GamePad?
 
 
-    constructor(gamePad: GamePad, robot: FourWheelRobot)
+    constructor(gamePad: GamePad?, robot: FourWheelRobot)
     {
         this.gamePad = gamePad
         this.robot = robot
@@ -34,9 +34,9 @@ class MecDrive2 : IDrive2 {
     }
 
     override fun manualDrive() {
-        setAxial(gamePad.getLeftStickY())
-        setLateral(gamePad.getLeftStickX())
-        setYaw(-gamePad.getRightStickX())
+        setAxial(gamePad!!.getLeftStickY())
+        setLateral(gamePad!!.getLeftStickX())
+        setYaw(-gamePad!!.getRightStickX())
     }
 
     override fun moveRobot(axial: Double, lateral: Double, yaw: Double) {
@@ -67,12 +67,6 @@ class MecDrive2 : IDrive2 {
             backLeft /= max
             backRight /= max
         }
-
-
-//        fl.power = frontLeft
-//        fr.power = frontRight
-//        bl.power = backLeft
-//        br.power = backRight
 
         robot.motorBL.power = backLeft
         robot.motorBR.power = backRight
