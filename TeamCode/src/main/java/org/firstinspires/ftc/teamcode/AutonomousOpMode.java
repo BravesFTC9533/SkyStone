@@ -66,7 +66,7 @@ public class AutonomousOpMode extends BaseLinearOpMode {
         }
     }
 
-    private void grabBrick() {
+    private void grabBrickFromBlue() {
         // Boolean for later when the trackable will be found
         boolean foundTarget = false;
 
@@ -88,21 +88,51 @@ public class AutonomousOpMode extends BaseLinearOpMode {
         turnDegrees(TurnDirection.COUNTER_CLOCKWISE, 180, 0.6);
     }
 
+    private void grabBrickFromRed() {
+        boolean foundTarget = false;
+
+        turnDegrees(TurnDirection.CLOCKWISE, 90, 0.5);
+
+        while(opModeIsActive() && !foundTarget) {
+            updateVuforia();
+            turnDegrees(TurnDirection.COUNTER_CLOCKWISE, 2, 1);
+            if (targetVisible && ((VuforiaTrackableDefaultListener) stoneTarget.getListener()).isVisible() && opModeIsActive()) {
+                foundTarget = true;
+            }
+        }
+
+        turnDegrees(TurnDirection.CLOCKWISE, 180, 0.6);
+        liftController.setServoPosition(LiftController.ServoPosition.SERVO_POSITION_OPEN);
+        moveByInches(0.6, positionX);
+        liftController.setServoPosition(LiftController.ServoPosition.SERVO_POSITION_CLOSED);
+        moveByInches(0.6, -positionX);
+        turnDegrees(TurnDirection.COUNTER_CLOCKWISE, 180, 0.6);
+    }
+
     private void blueBricks() {
         // Move off the wall
         moveByInches(0.6, 2);
-        grabBrick();
+        grabBrickFromBlue();
         // Move back
         moveByInches(0.6, -2);
         turnDegrees(TurnDirection.CLOCKWISE, 90, 0.6);
         moveByInches(0.6, 72);
-        turnDegrees(TurnDirection.COUNTER_CLOCKWISE, 90, 0.6);
-        moveByInches(0.6, 7);
-        turnDegrees(TurnDirection.COUNTER_CLOCKWISE, 180, 0.6);
+        turnDegrees(TurnDirection.CLOCKWISE, 90, 0.6);
+        moveByInches(0.6, -7);
         liftController.setServoPosition(LiftController.ServoPosition.SERVO_POSITION_OPEN);
     }
 
     private void redBricks() {
+        //Move off the wall
+        moveByInches(0.6, 2);
+        grabBrickFromRed();
+        //Move back
+        moveByInches(0.6, -2);
+        turnDegrees(TurnDirection.COUNTER_CLOCKWISE, 90, 0.6);
+        moveByInches(0.6, 72);
+        turnDegrees(TurnDirection.COUNTER_CLOCKWISE, 90, 0.6);
+        moveByInches(0.6, -7);
+        liftController.setServoPosition(LiftController.ServoPosition.SERVO_POSITION_OPEN);
 
     }
 
