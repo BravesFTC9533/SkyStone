@@ -24,6 +24,11 @@ public class LiftController extends BaseController {
     private boolean isClosed = true;
     private boolean isDragging = false;
 
+    public enum ServoPosition {
+        SERVO_POSITION_OPEN,
+        SERVO_POSITION_CLOSED
+    }
+
     public LiftController(HardwareMap hardwareMap, Config config, Telemetry telemetry) {
         super(hardwareMap, config);
         this.telemetry = telemetry;
@@ -62,6 +67,16 @@ public class LiftController extends BaseController {
             lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             lift.setPower(LIFT_SPEED);
             lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        }
+    }
+
+    public void setServoPosition(ServoPosition servoPosition) {
+        if(servoPosition == ServoPosition.SERVO_POSITION_OPEN) {
+            leftLiftServo.setPosition(0);
+            rightLiftServo.setPosition(1);
+        } else {
+            leftLiftServo.setPosition(1);
+            rightLiftServo.setPosition(0);
         }
     }
 

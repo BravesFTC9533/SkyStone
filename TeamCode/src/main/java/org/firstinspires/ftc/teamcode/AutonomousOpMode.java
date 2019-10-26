@@ -67,24 +67,39 @@ public class AutonomousOpMode extends BaseLinearOpMode {
     }
 
     private void grabBrick() {
+        // Boolean for later when the trackable will be found
         boolean foundTarget = false;
-        double distance = 0;
-        double turnDegrees = 0;
-        double z = 0;
+
+        // Turn towards the left target
+        turnDegrees(TurnDirection.COUNTER_CLOCKWISE, 90, 0.5);
+
         while(opModeIsActive() && !foundTarget) {
             updateVuforia();
+            turnDegrees(TurnDirection.CLOCKWISE, 2, 1);
             if (targetVisible && ((VuforiaTrackableDefaultListener) stoneTarget.getListener()).isVisible() && opModeIsActive()) {
-                distance = Math.abs(positionX);
-                z = positionZ;
                 foundTarget = true;
             }
         }
-        moveByInches(0.5, distance);
+        turnDegrees(TurnDirection.CLOCKWISE, 180, 0.6);
+        liftController.setServoPosition(LiftController.ServoPosition.SERVO_POSITION_OPEN);
+        moveByInches(0.6, positionX);
+        liftController.setServoPosition(LiftController.ServoPosition.SERVO_POSITION_CLOSED);
+        moveByInches(0.6, -positionX);
+        turnDegrees(TurnDirection.COUNTER_CLOCKWISE, 180, 0.6);
     }
 
     private void blueBricks() {
-        moveByInches(0.6, 10);
+        // Move off the wall
+        moveByInches(0.6, 2);
         grabBrick();
+        // Move back
+        moveByInches(0.6, -2);
+        turnDegrees(TurnDirection.CLOCKWISE, 90, 0.6);
+        moveByInches(0.6, 72);
+        turnDegrees(TurnDirection.COUNTER_CLOCKWISE, 90, 0.6);
+        moveByInches(0.6, 7);
+        turnDegrees(TurnDirection.COUNTER_CLOCKWISE, 180, 0.6);
+        liftController.setServoPosition(LiftController.ServoPosition.SERVO_POSITION_OPEN);
     }
 
     private void redBricks() {
