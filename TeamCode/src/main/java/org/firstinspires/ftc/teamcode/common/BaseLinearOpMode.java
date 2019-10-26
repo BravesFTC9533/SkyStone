@@ -79,8 +79,9 @@ public class BaseLinearOpMode extends LinearOpMode {
     // Constants for perimeter targets
     protected static final float halfField = 72 * mmPerInch;
     protected static final float quadField  = 36 * mmPerInch;
-    // Overshooting correction
-    private static final double OVERSHOOT_ADJUSTMENT = 0.8;
+
+    // Variables to set the maximum acceleration limit during autonomous encoder drive.
+    protected static final double ACC_LIMIT = 0.05;
 
     // Class Members
     protected OpenGLMatrix lastLocation = null;
@@ -378,6 +379,15 @@ public class BaseLinearOpMode extends LinearOpMode {
         setMotorsPowers(robot.allMotors, power);
     }
 
+    public boolean atPosition(ArrayList<DcMotor> motors, int expectedPosition) {
+        for(DcMotor motor : motors) {
+            if(motor.getCurrentPosition() != expectedPosition) {
+                return false;
+            }
+        }
+        return true;
+    }
+
     public void moveByInches(double power, double inches) {
         moveByInches(power, inches, inches);
     }
@@ -407,6 +417,7 @@ public class BaseLinearOpMode extends LinearOpMode {
         addTargetPositions(robot.rightMotors, (int) -rightTicks);
 
         robot.setMotorMode(DcMotor.RunMode.RUN_TO_POSITION);
+
         setMotorsPowers(robot.allMotors, targetSpeed);
 
         while(opModeIsActive() && robot.isBusy()) {
