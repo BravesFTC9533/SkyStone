@@ -95,6 +95,10 @@ public class BaseLinearOpMode extends LinearOpMode {
     protected float positionY;
     protected float positionZ;
 
+    protected float firstAngle;
+    protected float secondAngle;
+    protected float thirdAngle;
+
     // Setup Targets
     protected VuforiaTrackable stoneTarget;
     protected VuforiaTrackable blueRearBridge;
@@ -349,6 +353,9 @@ public class BaseLinearOpMode extends LinearOpMode {
             // express the rotation of the robot in degrees.
             Orientation rotation = Orientation.getOrientation(lastLocation, EXTRINSIC, XYZ, DEGREES);
             //telemetry.addData("Rot (deg)", "{Roll, Pitch, Heading} = %.0f, %.0f, %.0f", rotation.firstAngle, rotation.secondAngle, rotation.thirdAngle);
+            firstAngle = rotation.firstAngle;
+            secondAngle = rotation.secondAngle;
+            secondAngle = rotation.thirdAngle;
         }
         else {
             //telemetry.addData("Visible Target", "none");

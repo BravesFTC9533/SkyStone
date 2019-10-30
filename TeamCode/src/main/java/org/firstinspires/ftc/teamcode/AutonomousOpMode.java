@@ -66,73 +66,26 @@ public class AutonomousOpMode extends BaseLinearOpMode {
         }
     }
 
-    private void grabBrickFromBlue() {
-        // Boolean for later when the trackable will be found
-        boolean foundTarget = false;
+    boolean isTargetFound = false;
 
-        // Turn towards the left target
+    private void redBricks() {
+        moveByInches(0.6, 2);
         turnDegrees(TurnDirection.COUNTER_CLOCKWISE, 90, 0.5);
 
-        while(opModeIsActive() && !foundTarget) {
+        while(opModeIsActive() && !isTargetFound) {
             updateVuforia();
-            turnDegrees(TurnDirection.CLOCKWISE, 2, 1);
-            if (targetVisible && ((VuforiaTrackableDefaultListener) stoneTarget.getListener()).isVisible() && opModeIsActive()) {
-                foundTarget = true;
-            }
-        }
-        turnDegrees(TurnDirection.CLOCKWISE, 180, 0.6);
-        liftController.setServoPosition(LiftController.ServoPosition.SERVO_POSITION_OPEN);
-        moveByInches(0.6, positionX);
-        liftController.setServoPosition(LiftController.ServoPosition.SERVO_POSITION_CLOSED);
-        moveByInches(0.6, -positionX);
-        turnDegrees(TurnDirection.COUNTER_CLOCKWISE, 180, 0.6);
-    }
-
-    private void grabBrickFromRed() {
-        boolean foundTarget = false;
-
-        turnDegrees(TurnDirection.CLOCKWISE, 90, 0.5);
-
-        while(opModeIsActive() && !foundTarget) {
-            updateVuforia();
-            turnDegrees(TurnDirection.COUNTER_CLOCKWISE, 2, 1);
-            if (targetVisible && ((VuforiaTrackableDefaultListener) stoneTarget.getListener()).isVisible() && opModeIsActive()) {
-                foundTarget = true;
+            turnDegrees(TurnDirection.CLOCKWISE, 5, 1);
+            if(targetVisible) {
+                isTargetFound = false;
             }
         }
 
-        turnDegrees(TurnDirection.CLOCKWISE, 180, 0.6);
-        liftController.setServoPosition(LiftController.ServoPosition.SERVO_POSITION_OPEN);
-        moveByInches(0.6, positionX);
-        liftController.setServoPosition(LiftController.ServoPosition.SERVO_POSITION_CLOSED);
-        moveByInches(0.6, -positionX);
-        turnDegrees(TurnDirection.COUNTER_CLOCKWISE, 180, 0.6);
+        telemetry.addData("Rot (deg)", "{Roll, Pitch, Heading} = %.0f, %.0f, %.0f", firstAngle, secondAngle, thirdAngle);
+        telemetry.addData("Pos (in)", "{X, Y, Z} = %.1f, %.1f, %.1f",
+        positionX / mmPerInch, positionY / mmPerInch, positionZ / mmPerInch);
     }
 
     private void blueBricks() {
-        // Move off the wall
-        moveByInches(0.6, 2);
-        grabBrickFromBlue();
-        // Move back
-        moveByInches(0.6, -2);
-        turnDegrees(TurnDirection.CLOCKWISE, 90, 0.6);
-        moveByInches(0.6, 72);
-        turnDegrees(TurnDirection.CLOCKWISE, 90, 0.6);
-        moveByInches(0.6, -7);
-        liftController.setServoPosition(LiftController.ServoPosition.SERVO_POSITION_OPEN);
-    }
-
-    private void redBricks() {
-        //Move off the wall
-        moveByInches(0.6, 2);
-        grabBrickFromRed();
-        //Move back
-        moveByInches(0.6, -2);
-        turnDegrees(TurnDirection.COUNTER_CLOCKWISE, 90, 0.6);
-        moveByInches(0.6, 72);
-        turnDegrees(TurnDirection.COUNTER_CLOCKWISE, 90, 0.6);
-        moveByInches(0.6, -7);
-        liftController.setServoPosition(LiftController.ServoPosition.SERVO_POSITION_OPEN);
 
     }
 
