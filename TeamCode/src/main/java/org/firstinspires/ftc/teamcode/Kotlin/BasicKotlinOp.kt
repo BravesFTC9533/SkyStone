@@ -1,7 +1,9 @@
 package org.firstinspires.ftc.teamcode.Kotlin
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
+import com.qualcomm.robotcore.hardware.DcMotor
 import com.qualcomm.robotcore.hardware.Gamepad
+import com.qualcomm.robotcore.util.ElapsedTime
 import org.firstinspires.ftc.teamcode.Kotlin.Drives.IDrive2
 import org.firstinspires.ftc.teamcode.Kotlin.Drives.MecDrive2
 import org.firstinspires.ftc.teamcode.common.HardwareManager
@@ -32,33 +34,45 @@ class BasicKotlinOp : LinearOpMode(), IButtonHandler {
 
         ftcGamepad = GamePad(gamepad, this)
 
+
         drive = MecDrive2(ftcGamepad, basicRobot)
 
 
+        basicRobot.setMode(DcMotor.RunMode.RUN_USING_ENCODER)
         drive.initDrive()
-        nav.initVuforia(drive)
+        //nav.initVuforia(drive, hardwareMap)
 
-        nav.activateTracking()
+        //nav.activateTracking()
 
         while(!(isStarted || isStopRequested))
         {
             idle()
         }
 
+        var elapsed = ElapsedTime()
+
+        basicRobot.setMode(DcMotor.RunMode.RUN_USING_ENCODER)
 
         while(opModeIsActive())
         {
 
+
+
             telemetry.addData(">", "Press Left Bumper to track target")
 
-            telemetry.addData("voltage", "%.1f volts") { getBatteryVoltage() }
+            telemetry.addData("fl", basicRobot.motorFL.currentPosition)
+            telemetry.addData("fr", basicRobot.motorFR.currentPosition)
+            telemetry.addData("bl", basicRobot.motorBL.currentPosition)
+            telemetry.addData("br", basicRobot.motorBR.currentPosition)
+            //telemetry.addData("voltage", "%.1f volts") { getBatteryVoltage() }
 
-            if(nav.targetsAreVisible() && gamepad.left_bumper) {
-                nav.cruseControl(TARGET_DISTANCE)
-            } else {
-                drive.manualDrive()
-            }
+//            if(nav.targetsAreVisible() && gamepad.left_bumper) {
+//                nav.cruseControl(TARGET_DISTANCE)
+//            } else {
+//                drive.manualDrive()
+//            }
 
+            drive.manualDrive()
             drive.moveRobot()
 
             telemetry.update()

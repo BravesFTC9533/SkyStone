@@ -37,14 +37,14 @@ class MecDrive2 : IDrive2 {
         this.yaw = clip(y)
     }
     override fun setAxial(a: Double) {
-        this.axial = clip(a)
+        this.axial = clip(a) * -1
     }
     override fun setLateral(l: Double) {
         this.lateral = clip(l)
     }
 
     override fun manualDrive() {
-        setAxial(gamePad!!.getLeftStickY())
+        setAxial(-gamePad!!.getLeftStickY())
         setLateral(gamePad!!.getLeftStickX())
         setYaw(-gamePad!!.getRightStickX())
     }
@@ -57,7 +57,7 @@ class MecDrive2 : IDrive2 {
     }
     override fun moveRobot() {
 
-        var x = 0.0
+
         var v = clip(axial?:0.0)
         var h = clip(lateral?:0.0)
         var r = clip(yaw?:0.0)
@@ -137,11 +137,11 @@ class MecDrive2 : IDrive2 {
     }
     private fun encoderDrive(targetSpeed: Double, leftTicks: Int, rightTicks: Int) {
 
-        robot.motorBL.targetPosition -= leftTicks
-        robot.motorFL.targetPosition -= leftTicks
+        robot.motorBL.targetPosition += leftTicks
+        robot.motorFL.targetPosition += leftTicks
 
-        robot.motorBR.targetPosition -= rightTicks
-        robot.motorFR.targetPosition -= rightTicks
+        robot.motorBR.targetPosition += rightTicks
+        robot.motorFR.targetPosition += rightTicks
 
 
         robot.setMode(DcMotor.RunMode.RUN_TO_POSITION)

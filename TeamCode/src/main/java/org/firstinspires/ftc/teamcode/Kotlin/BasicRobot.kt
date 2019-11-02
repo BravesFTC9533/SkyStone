@@ -23,16 +23,16 @@ class FourWheelRobot {
         this.hwManager = hwManager
 
         this.motorBL = hwManager.getMotor("bl")
-        this.motorBL.direction = DcMotorSimple.Direction.FORWARD
+        this.motorBL.direction = DcMotorSimple.Direction.REVERSE
 
         this.motorFL = hwManager.getMotor("fl")
-        this.motorFL.direction= DcMotorSimple.Direction.FORWARD
+        this.motorFL.direction= DcMotorSimple.Direction.REVERSE
 
         this.motorFR = hwManager.getMotor("fr")
-        this.motorFR.direction = DcMotorSimple.Direction.REVERSE
+        this.motorFR.direction = DcMotorSimple.Direction.FORWARD
 
         this.motorBR = hwManager.getMotor("br")
-        this.motorBR.direction = DcMotorSimple.Direction.REVERSE
+        this.motorBR.direction = DcMotorSimple.Direction.FORWARD
 
 
     }

@@ -42,6 +42,7 @@ class AutonomousOp : LinearOpMode()
         liftController = LiftController(hardwareMap, config, telemetry)
 
         nav.initVuforia(drive, hardwareMap)
+        basicRobot.setMode(DcMotor.RunMode.RUN_USING_ENCODER)
 
 
         nav.activateTracking()
@@ -82,37 +83,78 @@ class AutonomousOp : LinearOpMode()
     }
 
 
+    fun pause() {
+        sleep(2000)
+    }
 
     fun redBricks() {
 
 
         telemetry.addLine("Move out from wall")
         telemetry.update()
-        drive.moveByInches(0.5, 2.0)
-        runEncoderDrive(2.0)
-
-
-        telemetry.addLine("turn 90")
-        telemetry.update()
-        drive.turnDegrees(MecDrive2.TurnDirection.COUNTER_CLOCKWISE, 50, 0.6)
-        runEncoderDrive(3.0)
-
-
-        telemetry.addLine("attempt to find brick")
-        telemetry.update()
-        var found = false
-
         runtime.reset()
+        drive.moveRobot(0.4, 0.0, 0.0)
+        while(opModeIsActive() && runtime.seconds() < 0.5){}
+        drive.stop()
 
-        drive.setYaw(0.2)
-        drive.moveRobot()
-        while(opModeIsActive() && runtime.seconds() < 5.0) {
+        pause()
+
+//        drive.moveByInches(0.5, 4.0)
+//        runEncoderDrive(2.0)
+
+
+
+
+        //pause()
+
+        telemetry.addLine("move left into wall")
+        telemetry.update()
+        runtime.reset()
+        drive.moveRobot(0.0, -0.8, 0.0)
+        while(opModeIsActive() && runtime.seconds() < 2){}
+        drive.stop()
+
+        pause()
+
+
+        telemetry.addLine("move towards bricks")
+        telemetry.update()
+        runtime.reset()
+        drive.moveRobot(0.4, 0.4, 0.0)
+        while(opModeIsActive() && runtime.seconds() < 0.75){}
+        drive.stop()
+
+        pause()
+
+
+
+        //scan across bricks for skystone
+        telemetry.addLine("looking for skystone")
+        telemetry.update()
+        runtime.reset()
+        drive.moveRobot(0.0, 0.4, 0.0)
+
+        var found = false
+        while(opModeIsActive() && runtime.seconds() < 5.0)
+        {
             if(nav.targetIsVisible(0)) {
                 found = true
                 break
             }
         }
         drive.stop()
+
+
+
+
+
+//        telemetry.addLine("turn 90")
+//        telemetry.update()
+//        drive.turnDegrees(MecDrive2.TurnDirection.COUNTER_CLOCKWISE, 50, 0.6)
+//        runEncoderDrive(3.0)
+
+
+
 
         if(!found) {
             // just grab
