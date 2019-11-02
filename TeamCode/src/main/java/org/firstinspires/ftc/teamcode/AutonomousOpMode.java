@@ -16,7 +16,7 @@ public class AutonomousOpMode extends BaseLinearOpMode {
     private LiftController liftController;
     private Config config;
 
-    private Config.Position startingPosition = Config.Position.BLUE_BRICKS;
+    private Config.Position startingPosition;
 
     @Override
     public void runOpMode() {
@@ -27,6 +27,8 @@ public class AutonomousOpMode extends BaseLinearOpMode {
 
         config = new Config(hardwareMap.appContext);
         liftController = new LiftController(hardwareMap, config, telemetry);
+
+        startingPosition = config.getPosition();
 
         telemetry.addData("Status", "Robot Initialized");
         telemetry.update();
@@ -66,73 +68,35 @@ public class AutonomousOpMode extends BaseLinearOpMode {
         }
     }
 
-    private void grabBrickFromBlue() {
-        // Boolean for later when the trackable will be found
-        boolean foundTarget = false;
 
-        // Turn towards the left target
-        turnDegrees(TurnDirection.COUNTER_CLOCKWISE, 90, 0.5);
+    private void redBricks() {
+        moveByInches(0.6, 4);
 
-        while(opModeIsActive() && !foundTarget) {
+        turnDegrees(TurnDirection.COUNTER_CLOCKWISE, 90, 0.6);
+
+        moveByInches(0.6, 15);
+
+        turnDegrees(TurnDirection.CLOCKWISE, 90, 0.6);
+
+        moveByInches(0.6, 8);
+
+        boolean isFound = false;
+
+        while(opModeIsActive()) {
             updateVuforia();
-            turnDegrees(TurnDirection.CLOCKWISE, 2, 1);
-            if (targetVisible && ((VuforiaTrackableDefaultListener) stoneTarget.getListener()).isVisible() && opModeIsActive()) {
-                foundTarget = true;
-            }
-        }
-        turnDegrees(TurnDirection.CLOCKWISE, 180, 0.6);
-        liftController.setServoPosition(LiftController.ServoPosition.SERVO_POSITION_OPEN);
-        moveByInches(0.6, positionX);
-        liftController.setServoPosition(LiftController.ServoPosition.SERVO_POSITION_CLOSED);
-        moveByInches(0.6, -positionX);
-        turnDegrees(TurnDirection.COUNTER_CLOCKWISE, 180, 0.6);
-    }
-
-    private void grabBrickFromRed() {
-        boolean foundTarget = false;
-
-        turnDegrees(TurnDirection.CLOCKWISE, 90, 0.5);
-
-        while(opModeIsActive() && !foundTarget) {
-            updateVuforia();
-            turnDegrees(TurnDirection.COUNTER_CLOCKWISE, 2, 1);
-            if (targetVisible && ((VuforiaTrackableDefaultListener) stoneTarget.getListener()).isVisible() && opModeIsActive()) {
-                foundTarget = true;
+            if(targetVisible) {
+                // Y position is the offset left and right right is positive
+                while(positionY != 0) {
+                    drive.drive(0, positionY, 0);
+                }
             }
         }
 
-        turnDegrees(TurnDirection.CLOCKWISE, 180, 0.6);
-        liftController.setServoPosition(LiftController.ServoPosition.SERVO_POSITION_OPEN);
-        moveByInches(0.6, positionX);
-        liftController.setServoPosition(LiftController.ServoPosition.SERVO_POSITION_CLOSED);
-        moveByInches(0.6, -positionX);
-        turnDegrees(TurnDirection.COUNTER_CLOCKWISE, 180, 0.6);
+        moveByInches(0.6, -positionX / 4);
+
     }
 
     private void blueBricks() {
-        // Move off the wall
-        moveByInches(0.6, 2);
-        grabBrickFromBlue();
-        // Move back
-        moveByInches(0.6, -2);
-        turnDegrees(TurnDirection.CLOCKWISE, 90, 0.6);
-        moveByInches(0.6, 72);
-        turnDegrees(TurnDirection.CLOCKWISE, 90, 0.6);
-        moveByInches(0.6, -7);
-        liftController.setServoPosition(LiftController.ServoPosition.SERVO_POSITION_OPEN);
-    }
-
-    private void redBricks() {
-        //Move off the wall
-        moveByInches(0.6, 2);
-        grabBrickFromRed();
-        //Move back
-        moveByInches(0.6, -2);
-        turnDegrees(TurnDirection.COUNTER_CLOCKWISE, 90, 0.6);
-        moveByInches(0.6, 72);
-        turnDegrees(TurnDirection.COUNTER_CLOCKWISE, 90, 0.6);
-        moveByInches(0.6, -7);
-        liftController.setServoPosition(LiftController.ServoPosition.SERVO_POSITION_OPEN);
 
     }
 

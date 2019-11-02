@@ -67,9 +67,6 @@ class AutonomousOp : LinearOpMode()
         }
 
 
-
-
-
         //use safe movement to move close to stone
         //attempt to find stone
         //use nav to move to stone
@@ -89,103 +86,122 @@ class AutonomousOp : LinearOpMode()
 
     fun redBricks() {
 
-
-        telemetry.addLine("Move out from wall")
-        telemetry.update()
         runtime.reset()
-        drive.moveRobot(0.4, 0.0, 0.0)
-        while(opModeIsActive() && runtime.seconds() < 0.5){}
+        drive.moveRobot(0.0, -0.6, 0.0)
+        while(opModeIsActive() && runtime.seconds() < 3) {}
         drive.stop()
 
-        pause()
+        drive.moveByInches(0.6, -10.0)
 
-//        drive.moveByInches(0.5, 4.0)
-//        runEncoderDrive(2.0)
-
-
-
-
-        //pause()
-
-        telemetry.addLine("move left into wall")
-        telemetry.update()
         runtime.reset()
-        drive.moveRobot(0.0, -0.8, 0.0)
-        while(opModeIsActive() && runtime.seconds() < 2){}
-        drive.stop()
+        while(opModeIsActive() && runtime.seconds() < 1.25) {}
 
-        pause()
-
-
-        telemetry.addLine("move towards bricks")
-        telemetry.update()
-        runtime.reset()
-        drive.moveRobot(0.4, 0.4, 0.0)
-        while(opModeIsActive() && runtime.seconds() < 0.75){}
-        drive.stop()
-
-        pause()
-
-
-
-        //scan across bricks for skystone
-        telemetry.addLine("looking for skystone")
-        telemetry.update()
-        runtime.reset()
-        drive.moveRobot(0.0, 0.4, 0.0)
-
-        var found = false
-        while(opModeIsActive() && runtime.seconds() < 5.0)
-        {
+        while(opModeIsActive()) {
             if(nav.targetIsVisible(0)) {
-                found = true
+                while(opModeIsActive() && !nav.cruseControl(5.0)) {
+                    drive.moveRobot()
+                }
                 break
             }
         }
         drive.stop()
 
 
+//        drive.moveByInches(0.6, 2.0)
+//        drive.turnDegrees(MecDrive2.TurnDirection.COUNTER_CLOCKWISE, 90, 0.6)
+//        drive.moveByInches(0.6, 30.0)
+//        drive.turnDegrees(MecDrive2.TurnDirection.CLOCKWISE, 90, 0.6)
 
 
 
-//        telemetry.addLine("turn 90")
+//        telemetry.addLine("Move out from wall")
 //        telemetry.update()
-//        drive.turnDegrees(MecDrive2.TurnDirection.COUNTER_CLOCKWISE, 50, 0.6)
-//        runEncoderDrive(3.0)
-
-
-
-
-        if(!found) {
-            // just grab
-            telemetry.addLine("brick not found")
-            telemetry.update()
-
-        } else {
-            telemetry.addLine("found brick")
-            telemetry.update()
-            liftController.setServoPosition(LiftController.ServoPosition.SERVO_POSITION_OPEN)
-            //move to brick
-
-            telemetry.addLine("moving into block")
-            telemetry.update()
-            while(opModeIsActive() && !nav.cruseControl(2.0))
-            {
-                drive.moveRobot()
-            }
-            drive.stop()
-
-            telemetry.addLine("move forward")
-            telemetry.update()
-            drive.moveByInches(1.0, 4.0)
-            runEncoderDrive(2.0)
-
-            telemetry.addLine("grab ")
-            telemetry.update()
-            liftController.setServoPosition(LiftController.ServoPosition.SERVO_POSITION_OPEN)
-
-
-        }
+//        runtime.reset()
+//        drive.moveRobot(0.4, 0.0, 0.0)
+//        while(opModeIsActive() && runtime.seconds() < 0.5){}
+//        drive.stop()
+//
+//        pause()
+//
+////        drive.moveByInches(0.5, 4.0)
+////        runEncoderDrive(2.0)
+//
+//
+//
+//
+//        //pause()
+//
+//        telemetry.addLine("move left into wall")
+//        telemetry.update()
+//        runtime.reset()
+//        drive.moveRobot(0.0, -0.8, 0.0)
+//        while(opModeIsActive() && runtime.seconds() < 2){}
+//        drive.stop()
+//
+//        pause()
+//
+//
+//        telemetry.addLine("move towards bricks")
+//        telemetry.update()
+//        runtime.reset()
+//        drive.moveRobot(0.4, 0.4, 0.0)
+//        while(opModeIsActive() && runtime.seconds() < 0.75){}
+//        drive.stop()
+//
+//        pause()
+//
+//
+//
+//        //scan across bricks for skystone
+//        telemetry.addLine("looking for skystone")
+//        telemetry.update()
+//        runtime.reset()
+//        drive.moveRobot(0.0, 0.4, 0.0)
+//
+//
+//
+//
+//
+//
+//
+////        telemetry.addLine("turn 90")
+////        telemetry.update()
+////        drive.turnDegrees(MecDrive2.TurnDirection.COUNTER_CLOCKWISE, 50, 0.6)
+////        runEncoderDrive(3.0)
+//
+//
+//
+//
+//        if(!found) {
+//            // just grab
+//            telemetry.addLine("brick not found")
+//            telemetry.update()
+//
+//        } else {
+//            telemetry.addLine("found brick")
+//            telemetry.update()
+//            liftController.setServoPosition(LiftController.ServoPosition.SERVO_POSITION_OPEN)
+//            //move to brick
+//
+//            telemetry.addLine("moving into block")
+//            telemetry.update()
+//            while(opModeIsActive() && !nav.cruseControl(2.0))
+//            {
+//                drive.moveRobot()
+//            }
+//            drive.stop()
+//
+//            telemetry.addLine("move forward")
+//            telemetry.update()
+//            drive.moveByInches(1.0, 4.0)
+//            runEncoderDrive(2.0)
+//
+//            telemetry.addLine("grab ")
+//            telemetry.update()
+//            liftController.setServoPosition(LiftController.ServoPosition.SERVO_POSITION_OPEN)
+//
+//
+//        }
 
     }
 

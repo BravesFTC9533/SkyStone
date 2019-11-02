@@ -148,6 +148,9 @@ class MecDrive2 : IDrive2 {
 
         setPower(targetSpeed)
 
+        while(isBusy()) {}
+        stop()
+
     }
 
     override fun isBusy(): Boolean {
