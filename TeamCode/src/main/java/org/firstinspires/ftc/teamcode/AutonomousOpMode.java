@@ -72,6 +72,10 @@ public class AutonomousOpMode extends BaseLinearOpMode {
         moveByInches(0.6, 2);
         turnDegrees(TurnDirection.COUNTER_CLOCKWISE, 90, 0.5);
 
+        moveByInches(0.6, 26);
+
+        turnDegrees(TurnDirection.CLOCKWISE, 90, 0.5);
+
         while(opModeIsActive() && !isTargetFound) {
             updateVuforia();
             turnDegrees(TurnDirection.CLOCKWISE, 5, 1);
