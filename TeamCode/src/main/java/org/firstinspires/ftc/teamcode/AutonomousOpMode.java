@@ -50,43 +50,42 @@ public class AutonomousOpMode extends BaseLinearOpMode {
 
         liftController.initLift();
 
-        switch(startingPosition) {
-            case BLUE_BRICKS:
-                blueBricks();
-                break;
-            case BLUE_BUILDING:
-                blueBuilding();
-                break;
-            case RED_BRICKS:
-                redBricks();
-                break;
-            case RED_BUILDING:
-                redBuilding();
-                break;
-        }
+        redBricks();
+//        switch(startingPosition) {
+//            case BLUE_BRICKS:
+//                blueBricks();
+//                break;
+//            case BLUE_BUILDING:
+//                blueBuilding();
+//                break;
+//            case RED_BRICKS:
+//                redBricks();
+//                break;
+//            case RED_BUILDING:
+//                redBuilding();
+//                break;
+//        }
     }
 
     boolean isTargetFound = false;
 
     private void redBricks() {
-        moveByInches(0.6, 2);
+        moveByInches(0.5, 4);
         turnDegrees(TurnDirection.COUNTER_CLOCKWISE, 90, 0.5);
 
-        moveByInches(0.6, 26);
+        moveByInches(0.6, 20);
 
         turnDegrees(TurnDirection.CLOCKWISE, 90, 0.5);
 
+        moveByInches(0.6, 8);
+
         while(opModeIsActive() && !isTargetFound) {
             updateVuforia();
-            turnDegrees(TurnDirection.CLOCKWISE, 5, 1);
-            if(targetVisible) {
-                isTargetFound = false;
-            }
+            telemetry.addData("Rot (deg)", "{Roll, Pitch, Heading} = %.0f, %.0f, %.0f", firstAngle, secondAngle, thirdAngle);
+            telemetry.addData("Pos (in)", "{X, Y, Z} = %.1f, %.1f, %.1f",
+                    positionX / mmPerInch, positionY / mmPerInch, positionZ / mmPerInch);
+            telemetry.update();
         }
-
-        telemetry.addData("Rot (deg)", "{Roll, Pitch, Heading} = %.0f, %.0f, %.0f", firstAngle, secondAngle, thirdAngle);
-        telemetry.addData("Pos (in)", "{X, Y, Z} = %.1f, %.1f, %.1f",
-        positionX / mmPerInch, positionY / mmPerInch, positionZ / mmPerInch);
     }
 
     private void blueBricks() {
