@@ -70,6 +70,14 @@ public class LiftController extends BaseController {
         }
     }
 
+    public void toggleDragServo() {
+        if(dragServo.getPosition() > 0) {
+            dragServo.setPosition(0);
+        } else {
+            dragServo.setPosition(1);
+        }
+    }
+
     public void setServoPosition(ServoPosition servoPosition) {
         if(servoPosition == ServoPosition.SERVO_POSITION_OPEN) {
             leftLiftServo.setPosition(0);
