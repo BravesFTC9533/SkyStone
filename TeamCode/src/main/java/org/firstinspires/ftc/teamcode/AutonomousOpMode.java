@@ -98,7 +98,7 @@ public class AutonomousOpMode extends BaseLinearOpMode {
         while(opModeIsActive() && !isTargetFound && runtime.seconds() <= 12) {
             updateVuforia();
             if(targetVisible) {
-
+                telemetry.addLine("Did Stuff");
                 if(positionY <= LEFT_MAX && positionY >= LEFT_MIN) {
                     brickPosition = BrickPosition.LEFT;
                 } else if(positionY <= RIGHT_MAX && positionY >= RIGHT_MIN) {
@@ -114,6 +114,7 @@ public class AutonomousOpMode extends BaseLinearOpMode {
         }
 
         if(isTargetFound) {
+            telemetry.addLine("Yay");
             switch (brickPosition) {
                 case CENTER:
                     turnDegrees(TurnDirection.CLOCKWISE, 90, 0.5);
