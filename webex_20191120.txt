@@ -1,0 +1,54 @@
+Reddit: https://www.reddit.com/r/FTC/
+Official forum: https://ftcforum.firstinspires.org/forum/ftc-technology
+	https://ftcforum.firstinspires.org/search?searchJSON=%7B%22last%22%3A%7B%22from%22%3A%22lastDay%22%7D%2C%22view%22%3A%22topic%22%2C%22starter_only%22%3A+1%2C%22sort%22%3A%7B%22lastcontent%22%3A%22desc%22%7D%2C%22exclude_type%22%3A%5B%22vBForum_PrivateMessage%22%5D%7D
+	
+run_to_position issues:	https://ftcforum.firstinspires.org/forum/control-hub-pilot-forum/77745-trouble-with-run_to_position-with-skystone-5-3-and-rev-firmware-1-8-2
+
+Discord's FTC server: https://discordapp.com/channels/225450307654647808/225451665602510850
+
+SkyStone wiki: https://github.com/FIRST-Tech-Challenge/SkyStone/wiki
+Troubleshooting wiki page: https://github.com/FIRST-Tech-Challenge/SkyStone/wiki/Troubleshooting
+SkyStone SDK issues: https://github.com/FIRST-Tech-Challenge/SkyStone/issues
+
+Programming Resources: https://www.firstinspires.org/resource-library/ftc/technology-information-and-resources
+Control system troubleshooting guide: https://www.firstinspires.org/sites/default/files/uploads/resource_library/ftc/control-system-troubleshooting-guide.pdf
+ESR's How to Ask Questions the Smart Way: http://www.catb.org/~esr/faqs/smart-questions.html
+Chief Delphi: https://www.chiefdelphi.com/c/other/first-tech-challenge
+Creating a log file: https://ftcforum.firstinspires.org/forum/ftc-technology/7135-creating-a-log-file
+
+
+Pull log files from robot controller:
+@SET ADB=%LOCALAPPDATA%\Android\Sdk\platform-tools\adb
+@IF "x%1"=="x" ECHO Please call this script with a team number; using 9999 for now
+@IF "x%1"=="x" SET TEAM=9999
+@IF NOT "x%1"=="x" SET TEAM=%1
+mkdir %TEAM%
+cp logcat.pl %TEAM%
+pushd %TEAM%
+  %ADB% start-server
+  
+  %ADB% pull /storage/emulated/0/driverStationLog.txt     logcat-ds.txt
+  %ADB% pull /storage/emulated/0/driverStationLog.txt.1   logcat-ds-1.txt
+  %ADB% pull /storage/emulated/0/robotControllerLog.txt   logcat-rc.txt
+  %ADB% pull /storage/emulated/0/robotControllerLog.txt.1 logcat-rc-1.txt
+  %ADB% pull /storage/emulated/0/FIRST
+  FOR %%I in (logcat*.txt) DO perl clean_logcat.pl %%~nI.txt cleaned-%%~nI.txt
+popd
+
+Reinstall:
+@SET ADB=%LOCALAPPDATA%\Android\Sdk\platform-tools\adb
+%ADB% start-server
+%ADB% uninstall com.qualcomm.ftcdriverstation
+%ADB% install FtcDriverStation-release.apk
+pause
+
+@SET ADB=%LOCALAPPDATA%\Android\Sdk\platform-tools\adb
+%ADB% start-server
+%ADB% uninstall com.qualcomm.ftcrobotcontroller
+%ADB% install FtcRobotController-release.apk
+pause
+
+
+
+Wireless debugging: http://developer.android.com/tools/help/adb.html#wireless
+Youtube tutorial:	https://www.youtube.com/watch?v=0XZ6EH7BV2M
