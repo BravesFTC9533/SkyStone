@@ -30,7 +30,8 @@ public class DriveSquare extends LinearOpMode {
 
     double power = 0.5;
     private static final int ENCODER_TICKS = 288;
-    private static final double TICKS_PER_DEGREE = 2.5;
+    private static final double TICKS_PER_DEGREE = 3.11;
+    private static final double LEFT_TICKS_PER_DEGREE = 3.11;
 
     public enum TurnDirection {
         LEFT, RIGHT
@@ -45,37 +46,54 @@ public class DriveSquare extends LinearOpMode {
 
         leftMotor = hardwareMap.get(DcMotorEx.class, "l");
         rightMotor = hardwareMap.get(DcMotorEx.class, "r");
+        lift = hardwareMap.get(DcMotor.class, "lift");
         leftMotor.setDirection(DcMotor.Direction.REVERSE);
 
         setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         waitForStart();
         runtime.reset();
-
+        
         //moveInches(95, 0.6);
 
-            moveInches(80, 0.8, 3);
-            //turn(TurnDirection.RIGHT, 90, 8);
-            servo();
+        //moveInches(80, 0.8, 3);
+        //turn(TurnDirection.LEFT, 90, 12);
+        //turn(TurnDirection.RIGHT, 90, 12);
+        lift(90,0.75,6);
+        //servo();
 
 
     }
 
+    private void lift(double degrees, double power, double timeOutSeconds) {
+        runtime.reset();
+        int ticks = 15;
+        lift.setTargetPosition(lift.getCurrentPosition() + ticks);
+        setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        lift.setPower(.75);
+        while (opModeIsActive() && lift.isBusy() &&
+                runtime.seconds() < timeOutSeconds) {
+
+        }
+        lift.setPower(0);
+        setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+    }
     private void turn(TurnDirection turn, int degrees, double timeOutSeconds) {
         runtime.reset();
         int leftTicks = (int) (TICKS_PER_DEGREE * degrees);
         int rightTicks = (int) -(TICKS_PER_DEGREE * degrees);
 
         if (turn == TurnDirection.LEFT) {
-            leftTicks *= -1;
-            rightTicks *= -1;
+            leftTicks *= -0.88;
+            rightTicks *= -0.88;
+        } else {
+            leftTicks *= 0.88;
+            rightTicks *= 0.88;
         }
-
-
         leftMotor.setTargetPosition(leftMotor.getCurrentPosition() + leftTicks);
         rightMotor.setTargetPosition(rightMotor.getCurrentPosition() + rightTicks);
         setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        setPower(power);
+        setPower(.25);
         while (opModeIsActive() && leftMotor.isBusy() && rightMotor.isBusy() &&
                 runtime.seconds() < timeOutSeconds) {
 
