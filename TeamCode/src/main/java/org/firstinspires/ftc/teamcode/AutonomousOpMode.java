@@ -243,7 +243,33 @@ public class AutonomousOpMode extends BaseLinearOpMode {
     }
 
     private void blueBricks() {
+        moveByInches(0.4, 4);
+        turnDegrees(TurnDirection.CLOCKWISE, 90, 0.4);
 
+        moveByInches(0.4, 20);
+
+        turnDegrees(TurnDirection.COUNTER_CLOCKWISE, 90, 0.4);
+
+        moveByInches(0.4, 8);
+
+        runtime.reset();
+
+        while(opModeIsActive() && !isTargetFound && runtime.seconds() <+ 12) {
+            updateVuforia();
+            if(targetVisible) {
+                if(positionY <= LEFT_MAX && positionY >= LEFT_MIN) {
+                    brickPosition = BrickPosition.LEFT;
+                } else if (positionY <= RIGHT_MAX && positionY >= RIGHT_MIN) {
+                    brickPosition = BrickPosition.RIGHT;
+                }
+
+                isTargetFound = true;
+            }
+            telemetry.addData("Rot (deg)", "{Roll, Pitch, Heading} = %.0f, %.0f, %.0f", firstAngle, secondAngle, thirdAngle);
+            telemetry.addData("Pos (in)", "{X, Y, Z} = %.1f, %.1f, %.1f",
+                    positionX / mmPerInch, positionY / mmPerInch, positionZ / mmPerInch);
+            telemetry.update();
+        }
     }
 
     private void blueBuilding() {

@@ -22,6 +22,9 @@ public class DriveSquare extends LinearOpMode {
     private static final double DISTANCE_BETWEEN_WHEELS = 15.0;
     private static final double WHEEL_DIAMETER = 3.33;
     private static final double WHEEL_CIRCUMFERENCE = WHEEL_DIAMETER * Math.PI;
+    private static final double NUMBER_OF_TICKS_WHEN_DOWN = 1;
+    private static final double NUMBER_OF_TICKS_WHEN_UP = 1;
+
 
     private double oneInch = ENCODER_TICKS / WHEEL_CIRCUMFERENCE;
 
@@ -30,54 +33,67 @@ public class DriveSquare extends LinearOpMode {
 
     double power = 0.5;
     private static final int ENCODER_TICKS = 288;
-    private static final double TICKS_PER_DEGREE = 3.11;
-    private static final double LEFT_TICKS_PER_DEGREE = 3.11;
+    private static final double TICKS_PER_DEGREE = 35;
 
     public enum TurnDirection {
         LEFT, RIGHT
     }
 
-    @Override
-    public void runOpMode() {
+
+    //@Override
+    public void runOpMode() throws InterruptedException {
         telemetry.addData("Status", "Initialized");
         telemetry.update();
-
-
 
         leftMotor = hardwareMap.get(DcMotorEx.class, "l");
         rightMotor = hardwareMap.get(DcMotorEx.class, "r");
         lift = hardwareMap.get(DcMotor.class, "lift");
+        servo = hardwareMap.get(Servo.class, "lservo");
+
+
+        servo.setDirection(Servo.Direction.FORWARD);
+
         leftMotor.setDirection(DcMotor.Direction.REVERSE);
 
         setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         waitForStart();
         runtime.reset();
-        
-        //moveInches(95, 0.6);
 
-        //moveInches(80, 0.8, 3);
-        //turn(TurnDirection.LEFT, 90, 12);
-        //turn(TurnDirection.RIGHT, 90, 12);
-        lift(90,0.75,6);
-        //servo();
+        /*
+        moveInches(3,5,3);
+        liftDo();
+        turn(TurnDirection.LEFT,90,5);
+        moveInches(30,5, 10);
+        turn(TurnDirection.LEFT,90,5);
+        */
+
+        servo.setPosition(1);
+        servo.wait(300);
 
 
+    }
+
+    private void liftDo() {
+        lift(90, 5, 5);
+        servo();
+        lift(-90, 5, 5);
     }
 
     private void lift(double degrees, double power, double timeOutSeconds) {
         runtime.reset();
-        int ticks = 15;
+        int ticks = (int)(TICKS_PER_DEGREE * degrees);
         lift.setTargetPosition(lift.getCurrentPosition() + ticks);
-        setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        lift.setPower(.75);
-        while (opModeIsActive() && lift.isBusy() &&
-                runtime.seconds() < timeOutSeconds) {
+        lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        lift.setPower(power);
+        while(opModeIsActive() && lift.isBusy() && runtime.seconds() < timeOutSeconds) {
 
         }
         lift.setPower(0);
-        setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
     }
+
     private void turn(TurnDirection turn, int degrees, double timeOutSeconds) {
         runtime.reset();
         int leftTicks = (int) (TICKS_PER_DEGREE * degrees);
@@ -93,7 +109,7 @@ public class DriveSquare extends LinearOpMode {
         leftMotor.setTargetPosition(leftMotor.getCurrentPosition() + leftTicks);
         rightMotor.setTargetPosition(rightMotor.getCurrentPosition() + rightTicks);
         setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        setPower(.25);
+        setPower(0.25);
         while (opModeIsActive() && leftMotor.isBusy() && rightMotor.isBusy() &&
                 runtime.seconds() < timeOutSeconds) {
 
@@ -147,11 +163,9 @@ public class DriveSquare extends LinearOpMode {
     }
 
     private void servo() {
-        if(servo.getPosition() == 1) {
-            servo.setPosition(0);
-        } else {
             servo.setPosition(1);
         }
+
+
     }
-}
 
