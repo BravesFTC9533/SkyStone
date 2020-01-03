@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -50,34 +51,37 @@ public class DriveSquare extends LinearOpMode {
         lift = hardwareMap.get(DcMotor.class, "lift");
         servo = hardwareMap.get(Servo.class, "lservo");
 
+        rightMotor.setDirection(DcMotor.Direction.FORWARD);
 
         servo.setDirection(Servo.Direction.FORWARD);
 
-        leftMotor.setDirection(DcMotor.Direction.REVERSE);
-
+        rightMotor.setDirection(DcMotor.Direction.REVERSE);
         setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         waitForStart();
         runtime.reset();
 
-        /*
-        moveInches(3,5,3);
-        liftDo();
-        turn(TurnDirection.LEFT,90,5);
-        moveInches(30,5, 10);
-        turn(TurnDirection.LEFT,90,5);
-        */
 
-        servo.setPosition(1);
-        servo.wait(300);
+            //moveInches(22, 3, 5);
+            //firstActions();
+            //moveInches(-10,3,5);
+            turn(TurnDirection.LEFT,90,5);
+            //servo.setPosition(0);
+        //turn(TurnDirection.LEFT,90,5);
+
+        //turn(TurnDirection.LEFT,90,5);
+
+
+        //servo.setPosition(1);
+        //servo.wait(300);
 
 
     }
 
-    private void liftDo() {
-        lift(90, 5, 5);
-        servo();
-        lift(-90, 5, 5);
+    private void firstActions() {
+        lift(-200, 1, 7);
+        servo(5);
+        lift(180, 1, 10);
     }
 
     private void lift(double degrees, double power, double timeOutSeconds) {
@@ -99,17 +103,18 @@ public class DriveSquare extends LinearOpMode {
         int leftTicks = (int) (TICKS_PER_DEGREE * degrees);
         int rightTicks = (int) -(TICKS_PER_DEGREE * degrees);
 
+        double tickAdjustment = 0.1472;
         if (turn == TurnDirection.LEFT) {
-            leftTicks *= -0.88;
-            rightTicks *= -0.88;
+            leftTicks *= -tickAdjustment; //0.88
+            rightTicks *= -tickAdjustment;
         } else {
-            leftTicks *= 0.88;
-            rightTicks *= 0.88;
+            leftTicks *= tickAdjustment;
+            rightTicks *= tickAdjustment;
         }
         leftMotor.setTargetPosition(leftMotor.getCurrentPosition() + leftTicks);
         rightMotor.setTargetPosition(rightMotor.getCurrentPosition() + rightTicks);
         setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        setPower(0.25);
+        setPower(1);
         while (opModeIsActive() && leftMotor.isBusy() && rightMotor.isBusy() &&
                 runtime.seconds() < timeOutSeconds) {
 
@@ -120,24 +125,11 @@ public class DriveSquare extends LinearOpMode {
 
     private void moveInches(int numInches, double power, double timeOutSeconds) {
         runtime.reset();
-        addPosition((int)oneInch * numInches);
-        //setPower(power);
-        int baseVelocity = 450;
-        setVelocity(baseVelocity);
-        while(opModeIsActive() && (leftMotor.isBusy() && rightMotor.isBusy()) && runtime.seconds() < timeOutSeconds)
-        {
-            //put correcting code here
-
-            //get position for each motor
-            //compare positions
-            //if required, if left ticks > right ticks, increase right velocity some
-            //opposite for if right > left
-            //else set them back to base
-        }
+        addPosition((int)oneInch * -numInches);
+        setVelocity(128 * (int) power);
+        while(opModeIsActive() && (leftMotor.isBusy() && rightMotor.isBusy()) && runtime.seconds() < timeOutSeconds){}
         setPower(0);
         setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-
     }
 
 
@@ -162,10 +154,16 @@ public class DriveSquare extends LinearOpMode {
         setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
 
-    private void servo() {
+    private void servo(int timeOutSeconds) {
+        if (servo.getPosition() == 0) {
             servo.setPosition(1);
+            while(runtime.seconds() < timeOutSeconds) {}
+        } else {
+            servo.setPosition(0);
+            while(runtime.seconds() < timeOutSeconds) {}
         }
 
-
     }
+
+}
 
