@@ -12,7 +12,6 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 public class DriveSquare extends LinearOpMode {
 
-    //@Override
 
     private ElapsedTime runtime = new ElapsedTime();
     private DcMotorEx leftMotor;
@@ -20,7 +19,7 @@ public class DriveSquare extends LinearOpMode {
     private DcMotor lift;
     private Servo servo;
 
-    private static final double DISTANCE_BETWEEN_WHEELS = 15.0;
+    private static final double DISTANCE_BETWEEN_WHEELS = 17.5;
     private static final double WHEEL_DIAMETER = 3.33;
     private static final double WHEEL_CIRCUMFERENCE = WHEEL_DIAMETER * Math.PI;
     private static final double NUMBER_OF_TICKS_WHEN_DOWN = 1;
@@ -28,13 +27,13 @@ public class DriveSquare extends LinearOpMode {
 
 
     private double oneInch = ENCODER_TICKS / WHEEL_CIRCUMFERENCE;
+    private double tickPerDegree = (17.5 * oneInch) / 90;
 
-
-    private static final int DRIFT_CORRECTION = 50;
+    private static final int DRIFT_CORRECTION = 24;
 
     double power = 0.5;
     private static final int ENCODER_TICKS = 288;
-    private static final double TICKS_PER_DEGREE = 35;
+    private static final double TICKS_PER_DEGREE = 20;
 
     public enum TurnDirection {
         LEFT, RIGHT
@@ -56,32 +55,57 @@ public class DriveSquare extends LinearOpMode {
         servo.setDirection(Servo.Direction.FORWARD);
 
         rightMotor.setDirection(DcMotor.Direction.REVERSE);
+        setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         waitForStart();
         runtime.reset();
 
-
-            //moveInches(22, 3, 5);
-            //firstActions();
-            //moveInches(-10,3,5);
-            turn(TurnDirection.LEFT,90,5);
-            //servo.setPosition(0);
-        //turn(TurnDirection.LEFT,90,5);
-
-        //turn(TurnDirection.LEFT,90,5);
-
-
-        //servo.setPosition(1);
-        //servo.wait(300);
+//        rightMotor.setTargetPosition((int)oneInch * (int) DISTANCE_BETWEEN_WHEELS);
+//        leftMotor.setTargetPosition((int) -(oneInch * DISTANCE_BETWEEN_WHEELS));
+//
+//        rightMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//        leftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);      rightMotor.setPower(1);
+//        leftMotor.setPower(1);
+//
+//
+//
+//        while(
 
 
+          blueBrick();
     }
 
-    private void firstActions() {
+    private void blueBrick() {
+        servo.setPosition(0);
+        moveInches(21, 1, 5);
+        lift(-370, 1, 3);
+        servo.setPosition(1);
+        waitMill(1000);
+        lift(370, 1, 5);
+        turn(TurnDirection.LEFT, 90, 1, 5);
+        moveInches(60, 1, 5);
+        lift(-130, 1, 5);
+        servo.setPosition(0);
+        waitMill(1000);
+        lift(120,1,5);
+        moveInches(-30, 1, 5);
+    }
+
+    private void redBrick() {
+        servo.setPosition(0);
+        moveInches(22, 1, 5);
         lift(-200, 1, 7);
-        servo(5);
-        lift(180, 1, 10);
+        servo.setPosition(1);
+        waitMill(1000);
+        lift(150, 1, 5);
+        turn(TurnDirection.LEFT, 90, 1, 5);
+        moveInches(60, 1, 5);
+        lift(-110, 1, 5);
+        servo.setPosition(0);
+        waitMill(1000);
+        lift(100, 1, 5);
+        moveInches(10, 3, 5);
     }
 
     private void lift(double degrees, double power, double timeOutSeconds) {
@@ -98,35 +122,43 @@ public class DriveSquare extends LinearOpMode {
 
     }
 
-    private void turn(TurnDirection turn, int degrees, double timeOutSeconds) {
-        runtime.reset();
-        int leftTicks = (int) (TICKS_PER_DEGREE * degrees);
-        int rightTicks = (int) -(TICKS_PER_DEGREE * degrees);
+    private void turn(TurnDirection turn, int degrees, double power, double timeOutSeconds) {
+//        runtime.reset();
+//        int leftTicks = (int) (tickPerDegree * degrees);
+//        int rightTicks = (int) -(tickPerDegree * degrees);
+//
+//
+//        if (turn == TurnDirection.LEFT) {
+//            rightTicks = -rightTicks;
+//            leftTicks = -leftTicks;
+//        }
+//
+//        leftMotor.setTargetPosition(leftMotor.getCurrentPosition() + leftTicks);
+//        rightMotor.setTargetPosition(rightMotor.getCurrentPosition() + rightTicks);
+//        setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//        setPower(power);
+//        while (opModeIsActive() && leftMotor.isBusy() && rightMotor.isBusy() &&
+//                runtime.seconds() < timeOutSeconds) {}
+//        setPower(0);
+//        setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightMotor.setTargetPosition((int)oneInch * (int) DISTANCE_BETWEEN_WHEELS);
+        leftMotor.setTargetPosition((int) -(oneInch * DISTANCE_BETWEEN_WHEELS));
 
-        double tickAdjustment = 0.1472;
-        if (turn == TurnDirection.LEFT) {
-            leftTicks *= -tickAdjustment; //0.88
-            rightTicks *= -tickAdjustment;
-        } else {
-            leftTicks *= tickAdjustment;
-            rightTicks *= tickAdjustment;
-        }
-        leftMotor.setTargetPosition(leftMotor.getCurrentPosition() + leftTicks);
-        rightMotor.setTargetPosition(rightMotor.getCurrentPosition() + rightTicks);
-        setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        setPower(1);
-        while (opModeIsActive() && leftMotor.isBusy() && rightMotor.isBusy() &&
-                runtime.seconds() < timeOutSeconds) {
+        rightMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        leftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-        }
-        setPower(0);
-        setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightMotor.setPower(1);
+        leftMotor.setPower(1);
+
+        while(opModeIsActive()) {}
+
     }
 
-    private void moveInches(int numInches, double power, double timeOutSeconds) {
+
+    private void moveInches(float numInches, double power, double timeOutSeconds) {
         runtime.reset();
         addPosition((int)oneInch * -numInches);
-        setVelocity(128 * (int) power);
+        setVelocity(600 * (int) power);
         while(opModeIsActive() && (leftMotor.isBusy() && rightMotor.isBusy()) && runtime.seconds() < timeOutSeconds){}
         setPower(0);
         setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -148,10 +180,15 @@ public class DriveSquare extends LinearOpMode {
         rightMotor.setMode(runMode);
     }
 
-    private void addPosition(int ticks) {
-        leftMotor.setTargetPosition(leftMotor.getCurrentPosition() + ticks);
-        rightMotor.setTargetPosition(rightMotor.getCurrentPosition() + ticks);
+    private void addPosition(float ticks) {
+        leftMotor.setTargetPosition(leftMotor.getCurrentPosition() + (int) ticks);
+        rightMotor.setTargetPosition(rightMotor.getCurrentPosition() + (int) ticks);
         setMode(DcMotor.RunMode.RUN_TO_POSITION);
+    }
+
+    private void waitMill(float mill) {
+        runtime.reset();
+        while(opModeIsActive() && runtime.milliseconds() < mill) {idle();}
     }
 
     private void servo(int timeOutSeconds) {
