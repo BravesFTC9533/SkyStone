@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.PracticeBot;
 
+import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -19,7 +20,7 @@ public class DriveSquare extends LinearOpMode {
     private DcMotor lift;
     private Servo servo;
 
-    private static final double DISTANCE_BETWEEN_WHEELS = 17.5;
+    private static final double DISTANCE_BETWEEN_WHEELS = 14;
     private static final double WHEEL_DIAMETER = 3.33;
     private static final double WHEEL_CIRCUMFERENCE = WHEEL_DIAMETER * Math.PI;
     private static final double NUMBER_OF_TICKS_WHEN_DOWN = 1;
@@ -33,7 +34,9 @@ public class DriveSquare extends LinearOpMode {
 
     double power = 0.5;
     private static final int ENCODER_TICKS = 288;
-    private static final double TICKS_PER_DEGREE = 20;
+    private static final double TICKS_PER_DEGREE = 35;
+
+    private BNO055IMU imu;
 
     public enum TurnDirection {
         LEFT, RIGHT
@@ -61,19 +64,19 @@ public class DriveSquare extends LinearOpMode {
         waitForStart();
         runtime.reset();
 
-//        rightMotor.setTargetPosition((int)oneInch * (int) DISTANCE_BETWEEN_WHEELS);
+//        rightMotor.setTargetPosition((int) (oneInch * DISTANCE_BETWEEN_WHEELS));
 //        leftMotor.setTargetPosition((int) -(oneInch * DISTANCE_BETWEEN_WHEELS));
 //
 //        rightMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-//        leftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);      rightMotor.setPower(1);
+//        leftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//
+//        rightMotor.setPower(1);
 //        leftMotor.setPower(1);
 //
-//
-//
-//        while(
+//        while(opModeIsActive()) {}
 
-
-          blueBrick();
+        turn(TurnDirection.LEFT, 90, 1, 5);
+//          blueBrick();
     }
 
     private void blueBrick() {
@@ -82,8 +85,8 @@ public class DriveSquare extends LinearOpMode {
         lift(-370, 1, 3);
         servo.setPosition(1);
         waitMill(1000);
-        lift(370, 1, 5);
-        turn(TurnDirection.LEFT, 90, 1, 5);
+        lift(200, 1, 5);
+        turn(TurnDirection.LEFT, 90, 1, 1);
         moveInches(60, 1, 5);
         lift(-130, 1, 5);
         servo.setPosition(0);
@@ -123,35 +126,22 @@ public class DriveSquare extends LinearOpMode {
     }
 
     private void turn(TurnDirection turn, int degrees, double power, double timeOutSeconds) {
-//        runtime.reset();
-//        int leftTicks = (int) (tickPerDegree * degrees);
-//        int rightTicks = (int) -(tickPerDegree * degrees);
-//
-//
-//        if (turn == TurnDirection.LEFT) {
-//            rightTicks = -rightTicks;
-//            leftTicks = -leftTicks;
-//        }
-//
-//        leftMotor.setTargetPosition(leftMotor.getCurrentPosition() + leftTicks);
-//        rightMotor.setTargetPosition(rightMotor.getCurrentPosition() + rightTicks);
-//        setMode(DcMotor.RunMode.RUN_TO_POSITION);
-//        setPower(power);
-//        while (opModeIsActive() && leftMotor.isBusy() && rightMotor.isBusy() &&
-//                runtime.seconds() < timeOutSeconds) {}
-//        setPower(0);
-//        setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        rightMotor.setTargetPosition((int)oneInch * (int) DISTANCE_BETWEEN_WHEELS);
-        leftMotor.setTargetPosition((int) -(oneInch * DISTANCE_BETWEEN_WHEELS));
+         float degree = (float) (oneInch * DISTANCE_BETWEEN_WHEELS) / 68f;
+            rightMotor.setTargetPosition (-degrees * (int) degree);
+            leftMotor.setTargetPosition(-degrees * (int) degree);
 
-        rightMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        leftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            if(turn == TurnDirection.LEFT) {
+                rightMotor.setTargetPosition(degrees * (int) degree);
+                leftMotor.setTargetPosition(-degrees * (int) degree);
+            }
 
-        rightMotor.setPower(1);
-        leftMotor.setPower(1);
+            rightMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            leftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-        while(opModeIsActive()) {}
+            rightMotor.setPower(power);
+            leftMotor.setPower(power);
 
+            while(opModeIsActive() && rightMotor.isBusy() && leftMotor.isBusy()) {}
     }
 
 
