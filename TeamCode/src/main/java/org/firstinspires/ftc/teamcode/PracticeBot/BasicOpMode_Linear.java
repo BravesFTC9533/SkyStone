@@ -29,6 +29,8 @@
 
 package org.firstinspires.ftc.teamcode.PracticeBot;
 
+import com.qualcomm.hardware.bosch.BNO055IMU;
+import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -37,142 +39,67 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 
-@TeleOp(name="Basic: Linear OpMode", group="Linear Opmode")
+
+@TeleOp(name="Compass", group="Linear Opmode")
 //@Disabled
 public class BasicOpMode_Linear extends LinearOpMode {
 
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
-    private DcMotor leftDrive = null;
-    private DcMotor rightDrive = null;
-    private DcMotor lift = null;
 
-    private Servo servoLeft = null;
-    private Servo servoRight = null;
-    private static final double TICKS_PER_DEGREE = 3.233888889;
+    private DcMotor left;
+    private DcMotor right;
+
+    public BNO055IMU imu;
+    public BNO055IMU.Parameters params;
 
     @Override
     public void runOpMode() {
         telemetry.addData("Status", "Initialized");
         telemetry.update();
 
-        leftDrive  = hardwareMap.get(DcMotor.class, "l");
-        rightDrive = hardwareMap.get(DcMotor.class, "r");
-        lift = hardwareMap.get(DcMotor.class, "lift");
+        params = new BNO055IMU.Parameters();
 
-        servoLeft = hardwareMap.get(Servo.class, "lservo");
-        servoRight = hardwareMap.get(Servo.class, "rservo");
+        params.angleUnit = BNO055IMU.AngleUnit.DEGREES;
+        params.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
+        params.calibrationDataFile = "BNO055IMUCalibration.json";
+        params.loggingEnabled = true;
+        params.loggingTag = "IMU";
+        params.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
 
-        leftDrive.setDirection(DcMotor.Direction.FORWARD);
-        rightDrive.setDirection(DcMotor.Direction.REVERSE);
-        lift.setDirection(DcMotorSimple.Direction.REVERSE);
-        servoRight.setDirection(Servo.Direction.REVERSE);
+        imu = hardwareMap.get(BNO055IMU.class, "imu");
+        imu.initialize(params);
 
-        //lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        left = hardwareMap.dcMotor.get("l");
+        right = hardwareMap.dcMotor.get("r");
 
-        servoLeft.setPosition(0);
-        servoRight.setPosition(0);
-        lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        right.setDirection(DcMotorSimple.Direction.REVERSE);
+
+        left.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        right.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        while(!isStopRequested() && !imu.isGyroCalibrated()) {
+            sleep(50);
+        }
+
         waitForStart();
         runtime.reset();
 
         while (opModeIsActive()) {
 
-            double leftPower;
-            double rightPower;
+            while(opModeIsActive() && imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES).thirdAngle < 90) {
+                right.setPower(1);
+                left.setPower(-1);
+            }
+            right.setPower(0);
+            left.setPower(0);
 
-            double drive =  gamepad1.left_stick_y;
-            double turn  =  -gamepad1.right_stick_x;
-            leftPower    = Range.clip(drive + turn, -1.0, 1.0) ;
-            rightPower   = Range.clip(drive - turn, -1.0, 1.0) ;
-
-            leftDrive.setPower(leftPower);
-            rightDrive.setPower(rightPower);
-
-            handleGamepad();
-
-            telemetry.addData("Status", "Run Time: " + runtime.toString());
-            telemetry.addData("Motors", "left (%.2f), right (%.2f)", leftPower, rightPower);
-            telemetry.addData("Motor Position", "left (%d), right (%d)",
-                    leftDrive.getCurrentPosition(), rightDrive.getCurrentPosition());
-            telemetry.addData("Lift", "Position: %d", lift.getCurrentPosition());
+            telemetry.addData("Compass", imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES));
             telemetry.update();
         }
-    }
-
-    private boolean isPressed = false;
-
-    private boolean buttonPressed = false;
-
-    private void handleGamepad() {
-        // Lift Control
-
-        if(gamepad1.x) {
-            lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        }
-//        if (gamepad2.atRest() && gamepad1.dpad_down) {
-//            lift.setPower(1);
-//        } else if (gamepad2.atRest() && gamepad1.dpad_up) {
-//            lift.setPower(-1);
-//        } else if (gamepad2.atRest()){
-//            lift.setPower(0);
-//        }
-
-        if (gamepad2.dpad_down) {
-            if(lift.getCurrentPosition() < 6800) {
-                lift.setPower(1);
-            } else {
-                lift.setPower(0);
-            }
-
-        } else if (gamepad2.dpad_up) {
-            if(lift.getCurrentPosition() > 0) {
-                lift.setPower(-1);
-            } else {
-                lift.setPower(0);
-            }
-        } else {
-            lift.setPower(0);
-        }
-
-        //hold button to close servo
-//        if(gamepad1.a) {
-//            servoRight.setPosition(1);
-//            servoLeft.setPosition(1);
-//        }
-//        else
-//        {
-//            servoRight.setPosition(0);
-//            servoLeft.setPosition(0);
-//        }
-
-        //toggle button state
-        if(gamepad2.a && !buttonPressed)
-        {
-            buttonPressed = true;
-            isPressed = !isPressed;
-        }
-        if(!gamepad2.a){
-            buttonPressed = false;
-        }
-
-        servoRight.setPosition(isPressed ? 1 : 0);
-        servoLeft.setPosition(isPressed ? 1: 0);
-
-
-        // Servo Control
-//        if (gamepad1.a) {
-//            if (isPressed) {
-//                servoLeft.setPosition(1);
-//                servoRight.setPosition(1);
-//                isPressed = !isPressed;
-//            } else {
-//                servoLeft.setPosition(0);
-//                servoRight.setPosition(0);
-//                isPressed = !isPressed;
-//            }
-//        }
     }
 }
