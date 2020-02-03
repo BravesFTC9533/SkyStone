@@ -72,10 +72,21 @@ public class DriveSquare extends LinearOpMode {
 //
 //        rightMotor.setPower(1);
 //        leftMotor.setPower(1);
-//
 //        while(opModeIsActive()) {}
+//
 
-        turn(TurnDirection.LEFT, 90, 1, 5);
+//        servo.setPosition(0);
+//        moveInches(20,1, 8);
+//        lift(-225, 1, 8);
+//        servo(10);
+//        lift(225,1,8);
+//        moveInches(-10,1,8);
+//        turn(TurnDirection.RIGHT, 90, 1, 5);
+//        moveInches(9,1,15);
+//
+
+        blueBrick();
+
 //          blueBrick();
     }
 
@@ -147,7 +158,8 @@ public class DriveSquare extends LinearOpMode {
 
     private void moveInches(float numInches, double power, double timeOutSeconds) {
         runtime.reset();
-        addPosition((int)oneInch * -numInches);
+        //addPosition((int)oneInch * -numInches);
+        addPosition((int)oneInch * -1 * numInches);
         setVelocity(600 * (int) power);
         while(opModeIsActive() && (leftMotor.isBusy() && rightMotor.isBusy()) && runtime.seconds() < timeOutSeconds){}
         setPower(0);
